@@ -1,0 +1,14 @@
+{
+  "name": "ship",
+  "version": "1.0.0",
+  "description": "Static hosting via ShipStatic. Deploy static sites with the ship CLI.",
+  "contextFileName": "skills/using-ship/SKILL.md",
+  "settings": [
+    {
+      "name": "API Key",
+      "description": "Your ShipStatic API key for deployments.",
+      "envVar": "SHIP_API_KEY",
+      "sensitive": true
+    }
+  ]
+}
