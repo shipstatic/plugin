@@ -6,8 +6,8 @@
     "name": "ShipStatic",
     "url": "https://shipstatic.com"
   },
-  "homepage": "https://github.com/shipstatic/ship-plugin",
-  "repository": "https://github.com/shipstatic/ship-plugin",
+  "homepage": "https://github.com/shipstatic/plugin",
+  "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
   "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic"]
 }
