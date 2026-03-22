@@ -1,13 +1,13 @@
 {
-  "name": "superpowers-ship",
+  "name": "ship",
   "version": "1.0.0",
   "description": "Deploy static sites to ShipStatic via the ship CLI",
   "author": {
     "name": "ShipStatic",
     "url": "https://shipstatic.com"
   },
-  "homepage": "https://github.com/shipstatic/superpowers-ship",
-  "repository": "https://github.com/shipstatic/superpowers-ship",
+  "homepage": "https://github.com/shipstatic/ship-plugin",
+  "repository": "https://github.com/shipstatic/ship-plugin",
   "license": "MIT",
   "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic"]
 }
