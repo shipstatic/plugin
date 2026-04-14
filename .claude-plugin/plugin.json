@@ -9,5 +9,5 @@
   "homepage": "https://github.com/shipstatic/plugin",
   "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
-  "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic", "ai-agents", "mcp"]
+  "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic", "ai-agents"]
 }
