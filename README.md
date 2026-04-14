@@ -1,0 +1,74 @@
+# Ship Plugin
+
+AI plugin for [ShipStatic](https://shipstatic.com) — deploy static websites, landing pages, and prototypes instantly from your coding assistant.
+
+Supports Claude Code, Cursor, and Gemini.
+
+## Prerequisite
+
+The plugin teaches your AI assistant the [Ship CLI](https://github.com/shipstatic/ship). Install it first:
+
+```bash
+npm install -g @shipstatic/ship
+```
+
+## Deploy — Free, No Account Needed
+
+Ask your AI assistant to deploy a site. No API key, no sign-up, no configuration.
+
+Your site is live instantly on `*.shipstatic.com`.
+
+Deployments without an API key are public and expire in 3 days. The response includes a **claim URL** — always show it to the user so they can keep the site permanently.
+
+## All Commands — Free API Key
+
+For permanent deployments and full control over your sites and domains, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key).
+
+```bash
+ship config    # paste your API key when prompted
+```
+
+### Deployments
+
+| Command | Description |
+|---------|-------------|
+| `ship ./dist` | Publish files and get a live URL instantly |
+| `ship deployments list` | List all deployments with their URLs, status, and labels |
+| `ship deployments get <deployment>` | Get deployment details including URL, status, file count, size, and labels |
+| `ship deployments set <deployment>` | Update the labels on a deployment for organization and filtering |
+| `ship deployments remove <deployment>` | Permanently remove a deployment and all its files |
+
+### Domains
+
+| Command | Description |
+|---------|-------------|
+| `ship domains set <name> [deployment]` | Connect a custom domain, switch deployments, or update labels |
+| `ship domains list` | List all domains with their linked deployments and verification status |
+| `ship domains get <name>` | Get domain details including linked deployment, verification status, and labels |
+| `ship domains records <name>` | Get the DNS records to configure at your DNS provider |
+| `ship domains dns <name>` | Look up which DNS provider hosts a domain |
+| `ship domains share <name>` | Get a shareable link with the required DNS records |
+| `ship domains validate <name>` | Check if a domain name is valid before connecting |
+| `ship domains verify <name>` | Check if DNS is configured correctly after setup |
+| `ship domains remove <name>` | Permanently disconnect and remove a custom domain |
+
+### Account
+
+| Command | Description |
+|---------|-------------|
+| `ship whoami` | Get your account details including email, plan, and usage |
+| `ship tokens create` | Create a deploy token (shown once) |
+| `ship tokens list` | List all tokens |
+| `ship tokens remove <token>` | Revoke a token |
+
+## Also Available
+
+| Integration | Install |
+|-------------|---------|
+| **[CLI & SDK](https://github.com/shipstatic/ship)** | `npm install -g @shipstatic/ship` |
+| **[MCP Server](https://github.com/shipstatic/mcp)** | `npx @shipstatic/mcp` |
+| **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v1` |
+
+## License
+
+MIT

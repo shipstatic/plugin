@@ -1,16 +1,17 @@
 {
   "name": "ship",
   "displayName": "Ship",
-  "description": "Static hosting via ShipStatic. Deploy static sites with the ship CLI.",
-  "version": "1.0.0",
+  "description": "Deploy static sites instantly — no account required",
+  "version": "1.1.0",
   "author": {
-    "name": "ShipStatic"
+    "name": "ShipStatic",
+    "url": "https://shipstatic.com"
   },
   "publisher": "ShipStatic",
   "homepage": "https://github.com/shipstatic/plugin",
   "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
-  "keywords": ["deploy", "static-site", "hosting", "ship", "shipstatic"],
+  "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic", "ai-agents"],
   "category": "developer-tools",
   "tags": ["deploy", "static", "hosting"],
   "skills": "./skills/"
