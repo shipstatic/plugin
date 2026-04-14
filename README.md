@@ -1,6 +1,6 @@
 # Ship Plugin
 
-AI plugin for [ShipStatic](https://shipstatic.com) — deploy static websites, landing pages, and prototypes instantly from your coding assistant.
+AI plugin for [ShipStatic](https://shipstatic.com) — deploy static websites, landing pages, and prototypes instantly from your AI assistant.
 
 Supports Claude Code, Cursor, and Gemini.
 
