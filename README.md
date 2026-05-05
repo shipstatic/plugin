@@ -2,7 +2,7 @@
 
 AI plugin for [ShipStatic](https://shipstatic.com) — deploy static websites, landing pages, and prototypes instantly from your AI assistant.
 
-Supports Claude Code, Cursor, and Gemini.
+Distributed as a Gemini CLI extension. The underlying SKILL.md uses the open [Agent Skills](https://agentskills.io) standard, so the same instructional content powers any of the [35+ skills-aware tools](https://agentskills.io/clients) — Claude, Claude Code, Cursor, GitHub Copilot, VS Code, OpenAI Codex, Goose, and more.
 
 ## Prerequisite
 
