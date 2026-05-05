@@ -57,7 +57,7 @@ ship config    # paste your API key when prompted
 | Command | Description |
 |---------|-------------|
 | `ship domains set <name> [deployment]` | Connect a custom domain to your site, switch deployments, or update labels |
-| `ship domains list` | List all domains with their linked deployments and verification status |
+| `ship domains list` | List all domains with their linked deployment and verification status |
 | `ship domains get <name>` | Get domain details including linked deployment, verification status, and labels |
 | `ship domains records <name>` | Get the DNS records you need to configure at your DNS provider |
 | `ship domains dns <name>` | Look up which DNS provider hosts a domain (e.g. Cloudflare, Namecheap) |
