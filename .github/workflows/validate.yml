@@ -1,0 +1,29 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate gemini-extension.json is well-formed JSON
+        run: jq empty gemini-extension.json
+
+      - name: Detect SKILL.md drift from canonical (npm/ship/SKILL.md)
+        # The canonical SKILL.md lives next to the @shipstatic/ship CLI it teaches.
+        # This plugin's copy must stay byte-identical — drift = stale instructions.
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/shipstatic/ship/main/SKILL.md \
+            -o /tmp/canonical-SKILL.md
+          if ! diff -q /tmp/canonical-SKILL.md skills/using-ship/SKILL.md; then
+            echo "::error title=SKILL drift detected::skills/using-ship/SKILL.md has drifted from https://github.com/shipstatic/ship/blob/main/SKILL.md. Sync with: cp ../../npm/ship/SKILL.md skills/using-ship/SKILL.md"
+            diff /tmp/canonical-SKILL.md skills/using-ship/SKILL.md || true
+            exit 1
+          fi
