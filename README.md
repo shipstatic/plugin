@@ -50,7 +50,7 @@ ship config    # paste your API key when prompted
 | `ship deployments list` | List all deployments with their URLs, status, labels, and password protection state |
 | `ship deployments get <deployment>` | Get deployment details including URL, status, file count, size, labels, and password protection state |
 | `ship deployments set <deployment>` | Update the labels on a deployment for organization and filtering |
-| `ship deployments remove <deployment>` | Permanently remove a deployment and all its files |
+| `ship deployments delete <deployment>` | Permanently delete a deployment and all its files |
 
 ### Domains
 
@@ -64,7 +64,7 @@ ship config    # paste your API key when prompted
 | `ship domains share <name>` | Get a shareable link so someone else can see the required DNS records |
 | `ship domains validate <name>` | Check if a domain name is valid and available before connecting it |
 | `ship domains verify <name>` | Check if DNS is configured correctly after you set up the records |
-| `ship domains remove <name>` | Permanently disconnect and remove a custom domain |
+| `ship domains delete <name>` | Permanently disconnect and delete a custom domain |
 
 ### Account
 
@@ -73,7 +73,7 @@ ship config    # paste your API key when prompted
 | `ship whoami` | Get your account details including email, plan, and usage |
 | `ship tokens create` | Create a deploy token (shown once) |
 | `ship tokens list` | List all tokens |
-| `ship tokens remove <token>` | Revoke a token |
+| `ship tokens delete <token>` | Revoke a token |
 
 ## Also Available
 
