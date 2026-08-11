@@ -62,7 +62,7 @@ ship ./dist --json
   "via": "cli",
   "created": 1743552000,
   "expires": 1743811200,
-  "claim": "https://my.shipstatic.com/claim/abc123"
+  "claim": "https://my.shipstatic.com/claims/claim-a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
 }
 ```
 
@@ -91,7 +91,7 @@ ship ./dist --password "hunter22"          # protect deployment
 SHIP_PASSWORD="hunter22" ship ./dist        # via env var
 ```
 
-Visitors get an unlock page until they enter the password. Length: 6–128 characters. Set per-deployment at upload time — cannot be added or changed later (deploy a new version to rotate). Works on both internal (`*.shipstatic.com`) and custom domains.
+Visitors get an unlock page until they enter the password. Length: 6–128 characters. Set per-deployment at upload time — cannot be added or changed later (deploy a new version to rotate). Works on both internal (`*.shipstatic.com`) and custom domains. **Always show the password to the user** if you set one — they need it to view the site.
 
 ### SPA routing
 
@@ -106,12 +106,12 @@ Deploy works without credentials. Everything else requires an API key.
 | Permanent deploys, domains, tokens, account | Deploy (public, 3-day TTL) |
 
 ```bash
-export SHIP_API_KEY=<key>          # Environment variable (best for automation)
-ship --api-key <key> ...           # Per-command override
+export SHIP_TOKEN=<token>          # Environment variable (best for automation)
+ship --token <token> ...           # Per-command override
 ship config                        # Interactive setup → ~/.shiprc (requires TTY)
 ```
 
-Deploy tokens (`--deploy-token`) are scoped, revocable deploy credentials. Set a short TTL for one-shot CI/CD workflows.
+Any ship token works: an API key (`ship-…`, durable, full account) or a deploy token (`deploy-…`, scoped, revocable — set a short TTL for one-shot CI/CD workflows).
 
 Free API key: https://my.shipstatic.com/api-key
 
@@ -223,9 +223,11 @@ Every command supports three modes:
 | `--json` | JSON on stdout | Parsing programmatically |
 | `-q` | Identifier only | Piping between commands |
 
+`-q` prints the resource identifier — except `tokens create -q`, which prints the token **secret** (shown once, never again).
+
 Errors go to stderr in all modes. Exit 0 = success, 1 = error.
 
-List commands return `{"<resource>s": [...], "cursor": null, "total": N}`. `domains list` text mode omits status — use `--json` to see `pending` vs `success`.
+List commands return `{"<resource>s": [...], "cursor": null}`. A non-null `cursor` means more pages remain — pass it back with `--cursor` to continue, and size pages with `--limit`. There is no total; a count is an aggregate over a collection, not a property of one page. `domains list` text mode omits status — use `--json` to see `pending` vs `success`.
 
 ## Commands
 
@@ -237,7 +239,7 @@ ship deployments upload <path>       # Deploy (explicit)
 ship deployments list                # List all
 ship deployments get <deployment>    # Details
 ship deployments set <deployment>    # Update labels (--label)
-ship deployments remove <deployment> # Delete (async)
+ship deployments delete <deployment> # Delete (async)
 ```
 
 ### Domains
@@ -251,7 +253,7 @@ ship domains records <name>           # Required DNS records
 ship domains dns <name>               # DNS provider lookup
 ship domains share <name>             # Shareable setup link
 ship domains verify <name>            # Trigger DNS verification
-ship domains remove <name>            # Delete
+ship domains delete <name>            # Delete
 ```
 
 ### Account & Tokens
@@ -262,7 +264,8 @@ ship ping                             # Connectivity check
 ship tokens create                    # New deploy token (shown once)
 ship tokens create --ttl 3600         # With expiry (seconds)
 ship tokens list                      # List tokens
-ship tokens remove <token>            # Revoke
+ship tokens get <token>               # Details for one token
+ship tokens delete <token>            # Delete (revokes immediately)
 ```
 
 ## Flags
@@ -271,8 +274,7 @@ ship tokens remove <token>            # Revoke
 |------|---------|
 | `--json` | JSON output |
 | `-q, --quiet` | Identifier only |
-| `--api-key <key>` | API key for this command |
-| `--deploy-token <token>` | Single-use deploy token |
+| `--token <token>` | Any ship token: API key or deploy token |
 | `--label <label>` | Set label (repeatable, replaces all) |
 | `--password <pwd>` | Password-protect deployment (6–128 chars) |
 | `--no-path-detect` | Skip build output auto-detection |
