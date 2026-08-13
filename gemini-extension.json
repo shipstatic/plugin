@@ -1,13 +1,13 @@
 {
   "name": "ship",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Deploy static sites instantly — no account required",
   "contextFileName": "skills/using-ship/SKILL.md",
   "settings": [
     {
       "name": "API Key",
-      "description": "Your ShipStatic API key for permanent deployments and domain management.",
-      "envVar": "SHIP_API_KEY",
+      "description": "Your ShipStatic API key, for permanent deployments and domain management — one credential, two names: the console mints it as an API key (ship-...), and the variable that carries it is the token. Free at https://my.shipstatic.com/api-key.",
+      "envVar": "SHIP_TOKEN",
       "sensitive": true
     }
   ]
