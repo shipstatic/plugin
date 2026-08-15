@@ -79,10 +79,10 @@ ship config    # paste your API key when prompted
 
 | Integration | Install |
 |-------------|---------|
-| **[CLI & SDK](https://github.com/shipstatic/ship)** | `npm install -g @shipstatic/ship` |
-| **[MCP Server](https://github.com/shipstatic/mcp)** | `npx @shipstatic/mcp` |
+| **[CLI & SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` — no install |
+| **[MCP](https://mcp.shipstatic.com)** | Drop `https://mcp.shipstatic.com` into any MCP client — no install |
 | **[VS Code Extension](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the VS Code Marketplace |
-| **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v1` |
+| **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v2` |
 
 ## License
 
