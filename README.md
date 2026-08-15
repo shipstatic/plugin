@@ -36,7 +36,7 @@ Want a private site? Ask your AI assistant to set a password when deploying — 
 
 ## All Commands — Free API Key
 
-For permanent deployments and full control over your sites and domains, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key).
+For permanent deployments and full control over your sites and domains, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key). Wherever a setting asks for a *token* — `SHIP_TOKEN`, `--token` — that key is the value: one credential, two names.
 
 ```bash
 ship config    # paste your API key when prompted
