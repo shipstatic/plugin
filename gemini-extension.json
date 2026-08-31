@@ -1,12 +1,20 @@
 {
   "name": "ship",
-  "version": "1.3.2",
+  "version": "2.0.0",
   "description": "Deploy static sites instantly — no account required",
-  "contextFileName": "skills/using-ship/SKILL.md",
+  "mcpServers": {
+    "shipstatic": {
+      "command": "npx",
+      "args": ["-y", "@shipstatic/mcp@1"],
+      "env": {
+        "SHIP_VIA": "gmn"
+      }
+    }
+  },
   "settings": [
     {
       "name": "API Key",
-      "description": "Your ShipStatic API key, for permanent deployments and domain management — one credential, two names: the console mints it as an API key (ship-...), and the variable that carries it is the token. Free at https://my.shipstatic.com/api-key.",
+      "description": "Optional. Without it, deploys are public and expire in 3 days. Your ShipStatic API key unlocks permanent deployments, custom domains, and account tools. One credential, two names: the console mints it as an API key (ship-...), and the variable that carries it is the token. Free at https://my.shipstatic.com/api-key.",
       "envVar": "SHIP_TOKEN",
       "sensitive": true
     }

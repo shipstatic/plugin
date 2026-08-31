@@ -2,7 +2,7 @@
   "name": "ship",
   "displayName": "Ship",
   "description": "Deploy static sites instantly — no account required",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "author": {
     "name": "ShipStatic",
     "url": "https://shipstatic.com"
