@@ -1,79 +1,48 @@
 # Ship Plugin
 
-AI plugin for [ShipStatic](https://shipstatic.com) — deploy static websites, landing pages, and prototypes instantly from your AI assistant.
+AI plugin for [ShipStatic](https://shipstatic.com): deploy static websites, landing pages, and prototypes instantly from your AI assistant.
 
-Distributed as a Gemini CLI extension. The underlying SKILL.md uses the open [Agent Skills](https://agentskills.io) standard, so the same instructional content powers any of the [35+ skills-aware tools](https://agentskills.io/clients) — Claude, Claude Code, Cursor, GitHub Copilot, VS Code, OpenAI Codex, Goose, and more.
-
-## Setup
-
-### Gemini CLI
+## Gemini CLI
 
 ```bash
 gemini extensions install https://github.com/shipstatic/plugin
 ```
 
-### Claude Code, Cursor, and other Agent Skills tools
+The extension registers the ShipStatic MCP server ([`@shipstatic/mcp`](https://github.com/shipstatic/mcp)) inside Gemini CLI: all fifteen tools, running on your own machine, deploying folders straight from disk.
 
-Copy `skills/using-ship/SKILL.md` into the tool's skills directory. See [skills-aware tools](https://agentskills.io/clients) for per-tool instructions.
+Ask Gemini to deploy a site. No API key, no sign-up, no configuration. Your site is live instantly on `*.shipstatic.com`.
 
-## Prerequisite
+Deployments without an API key are public and expire in 3 days. The response includes a **claim URL** so you can keep the site permanently.
 
-The plugin teaches your AI assistant the [Ship CLI](https://github.com/shipstatic/ship). Install it first:
+Want a private site? Ask Gemini to set a password when deploying. Visitors will be prompted to unlock before viewing, on the deployment URL and on any custom domains pointing at it.
 
-```bash
-npm install -g @shipstatic/ship
-```
+### API key (optional)
 
-## Deploy — Free, No Account Needed
+For permanent deployments, custom domains, and account tools, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key). Gemini asks for it when the extension installs and stores it in your system keychain. One credential, two names: the console mints it as an API key (`ship-...`), and the variable that carries it is the token (`SHIP_TOKEN`).
 
-Ask your AI assistant to deploy a site. No API key, no sign-up, no configuration.
+### Tools
 
-Your site is live instantly on `*.shipstatic.com`.
+| Tool | Description |
+|------|-------------|
+| `deployments_upload` | Deploy a folder and get a live URL instantly, optionally protected by a password |
+| `deployments_list` | List all deployments with their URLs, status, labels, and password protection state |
+| `deployments_get` | Get deployment details including URL, status, file count, size, and labels |
+| `deployments_set` | Update the labels on a deployment for organization and filtering |
+| `deployments_delete` | Permanently delete a deployment and all its files |
+| `domains_set` | Connect a custom domain to your site, switch deployments, or update labels |
+| `domains_list` | List all domains with their linked deployment and verification status |
+| `domains_get` | Get domain details including linked deployment, verification status, and labels |
+| `domains_records` | Get the DNS records you need to configure at your DNS provider |
+| `domains_dns` | Look up which DNS provider hosts a domain (e.g. Cloudflare, Namecheap) |
+| `domains_share` | Get a shareable link so someone else can see the required DNS records |
+| `domains_validate` | Check if a domain name is valid and available before connecting it |
+| `domains_verify` | Check if DNS is configured correctly after you set up the records |
+| `domains_delete` | Permanently disconnect and delete a custom domain |
+| `whoami` | Get your account details including email, plan, and usage |
 
-Deployments without an API key are public and expire in 3 days. The response includes a **claim URL** — always show it to the user so they can keep the site permanently.
+## Agent Skills: Claude Code, Cursor, and 30+ tools
 
-Want a private site? Ask your AI assistant to set a password when deploying — visitors will be prompted to unlock before viewing, on the deployment URL and on any custom domains pointing at it.
-
-## All Commands — Free API Key
-
-For permanent deployments and full control over your sites and domains, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key). Wherever a setting asks for a *token* — `SHIP_TOKEN`, `--token` — that key is the value: one credential, two names.
-
-```bash
-ship config    # paste your API key when prompted
-```
-
-### Deployments
-
-| Command | Description |
-|---------|-------------|
-| `ship ./dist` | Publish files and get a live URL instantly, optionally protected by a password |
-| `ship deployments list` | List all deployments with their URLs, status, labels, and password protection state |
-| `ship deployments get <deployment>` | Get deployment details including URL, status, file count, size, labels, and password protection state |
-| `ship deployments set <deployment>` | Update the labels on a deployment for organization and filtering |
-| `ship deployments delete <deployment>` | Permanently delete a deployment and all its files |
-
-### Domains
-
-| Command | Description |
-|---------|-------------|
-| `ship domains set <name> [deployment]` | Connect a custom domain to your site, switch deployments, or update labels |
-| `ship domains list` | List all domains with their linked deployment and verification status |
-| `ship domains get <name>` | Get domain details including linked deployment, verification status, and labels |
-| `ship domains records <name>` | Get the DNS records you need to configure at your DNS provider |
-| `ship domains dns <name>` | Look up which DNS provider hosts a domain (e.g. Cloudflare, Namecheap) |
-| `ship domains share <name>` | Get a shareable link so someone else can see the required DNS records |
-| `ship domains validate <name>` | Check if a domain name is valid and available before connecting it |
-| `ship domains verify <name>` | Check if DNS is configured correctly after you set up the records |
-| `ship domains delete <name>` | Permanently disconnect and delete a custom domain |
-
-### Account
-
-| Command | Description |
-|---------|-------------|
-| `ship whoami` | Get your account details including email, plan, and usage |
-| `ship tokens create` | Create a deploy token (shown once) |
-| `ship tokens list` | List all tokens |
-| `ship tokens delete <token>` | Revoke a token |
+The repo also ships `skills/using-ship/SKILL.md`, which teaches the [Ship CLI](https://github.com/shipstatic/ship) through the open [Agent Skills](https://agentskills.io) standard. Copy it into your tool's skills directory; see [skills-aware tools](https://agentskills.io/clients) for per-tool instructions. The skill needs the CLI available, and `npx -y @shipstatic/ship` needs no install at all.
 
 ## Also Available
 
