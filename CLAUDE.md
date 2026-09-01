@@ -2,12 +2,12 @@
 
 Claude Code instructions for the **ShipStatic Gemini CLI extension**.
 
-**`shipstatic/plugin`** — installed with `gemini extensions install`. Since
+**`shipstatic/plugin`**, installed with `gemini extensions install`. Since
 2.0.0 it is an **MCP host**: the manifest registers the local stdio server, so
 Gemini gets all fifteen ShipStatic tools running on the user's own machine.
 Before 2.0.0 it was a context file teaching the `ship` CLI.
 
-There is no code here — three manifests, a README, and a vendored skill — which
+There is no code here (three manifests, a README, and a vendored skill), which
 is why the repo carries no `package.json`, no biome and no coverage. It follows
 the estate's tooling standard in the two ways a manifest-only repo can: the
 `validate.yml` fences below, and this file.
@@ -15,10 +15,10 @@ the estate's tooling standard in the two ways a manifest-only repo can: the
 ## Layout
 
 ```
-gemini-extension.json          # THE manifest — Gemini reads this one
+gemini-extension.json          # THE manifest: Gemini reads this one
 .claude-plugin/plugin.json     # the same product, for Claude Code's plugin dir
 .cursor-plugin/plugin.json     # and for Cursor's
-skills/using-ship/SKILL.md     # VENDORED from npm/ship — never edited here
+skills/using-ship/SKILL.md     # VENDORED from npm/ship, never edited here
 .github/workflows/validate.yml # the fences
 .github/workflows/release.yml  # tag == manifest version, then a GitHub Release
 ```
@@ -56,7 +56,7 @@ well-formed JSON.
 
 Gemini prompts for it at install, stores it in the system keychain
 (`sensitive: true`), and injects it into the MCP server's process. **It
-reaches nothing without an `mcpServers` block** — which is what the manifest
+reaches nothing without an `mcpServers` block**, which is what the manifest
 declared for its whole life before 2.0.0, so the setting was inert: Gemini
 sanitizes the environment and passes only declared variables to declared
 processes, and there was no process. Optional by design: without it, deploys
@@ -87,5 +87,5 @@ monorepo's `CANON.md` §1 says a free-choice identifier should be the brand,
 because `ship` is a common English word in a catalogue of thousands. Changing
 `name` is an install-identity change in a host nobody has sat with yet, so it
 is deliberately deferred to the session that walks a real
-`gemini extensions install` — change it there, or record it as decided-to-keep
+`gemini extensions install`: change it there, or record it as decided-to-keep
 there. Titles and display names already follow the canon.
