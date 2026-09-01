@@ -80,12 +80,19 @@ creates the GitHub Release. The version lives in all three manifests at once.
 git tag -a v2.0.1 -m "…" && git push origin v2.0.1
 ```
 
-## Open
+## The identifier is `shipstatic` (decided 2026-09-02, at the walk)
 
-**The extension IDENTIFIER is `ship`, and canon prefers `shipstatic`.** The
-monorepo's `CANON.md` §1 says a free-choice identifier should be the brand,
-because `ship` is a common English word in a catalogue of thousands. Changing
-`name` is an install-identity change in a host nobody has sat with yet, so it
-is deliberately deferred to the session that walks a real
-`gemini extensions install`: change it there, or record it as decided-to-keep
-there. Titles and display names already follow the canon.
+`name` was `ship` until 3.0.0, deferred because it is the install identity in
+a host nobody had sat with. The walk happened: a real
+`gemini extensions install` of the repo, an uninstall, and a reinstall under
+the renamed manifest, all clean — the manifest `name` wins over the repo
+directory name, and it becomes the on-disk directory
+(`~/.gemini/extensions/shipstatic`), the config handle
+(`gemini extensions config shipstatic`) and the uninstall handle. So the
+canon's identifier rule applies with nothing against it, and 3.0.0 renames all
+three manifests in one move. A major, honestly: anyone who installed a 2.x
+would re-install under the new name. Two walk facts worth keeping:
+`--consent --skip-settings` is the non-interactive install (without them the
+command waits on prompts), and Gemini auto-discovers `skills/` even with no
+`contextFileName`, so the vendored skill surfaces beside the MCP server as an
+Agent Skill, matched by its own trigger description.
