@@ -1,6 +1,6 @@
-# Ship Plugin
+# ShipStatic for Gemini CLI
 
-AI plugin for [ShipStatic](https://shipstatic.com): deploy static websites, landing pages, and prototypes instantly from your AI assistant.
+Deploy static websites, landing pages, and prototypes instantly from [ShipStatic](https://shipstatic.com), inside Gemini CLI. Free, no account needed.
 
 ## Gemini CLI
 
@@ -42,16 +42,18 @@ For permanent deployments, custom domains, and account tools, get a free API key
 
 ## Agent Skills: Claude Code, Cursor, and 30+ tools
 
-The repo also ships `skills/using-ship/SKILL.md`, which teaches the [Ship CLI](https://github.com/shipstatic/ship) through the open [Agent Skills](https://agentskills.io) standard. Copy it into your tool's skills directory; see [skills-aware tools](https://agentskills.io/clients) for per-tool instructions. The skill needs the CLI available, and `npx -y @shipstatic/ship` needs no install at all.
+The repo also ships `skills/using-ship/SKILL.md`, which teaches the [ShipStatic CLI](https://github.com/shipstatic/ship) through the open [Agent Skills](https://agentskills.io) standard. Copy it into your tool's skills directory; see [skills-aware tools](https://agentskills.io/clients) for per-tool instructions. The skill needs the CLI available, and `npx -y @shipstatic/ship` needs no install at all.
 
-## Also Available
+## Also available
 
-| Integration | Install |
-|-------------|---------|
-| **[CLI & SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` — no install |
-| **[MCP](https://mcp.shipstatic.com)** | Drop `https://mcp.shipstatic.com` into any MCP client — no install |
-| **[VS Code Extension](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the VS Code Marketplace |
+| Surface | Reach it |
+|---------|----------|
+| **[MCP](https://mcp.shipstatic.com)** | Drop `https://mcp.shipstatic.com` into any MCP client |
+| **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
+| **[VS Code](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the Marketplace |
+| **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
 | **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v2` |
+| **[Agent Skill](https://www.shipstatic.com/SKILL.md)** | One file, for any skills-aware tool |
 
 ## License
 
