@@ -1,13 +1,23 @@
 {
   "name": "ship",
   "version": "2.0.0",
-  "description": "Deploy static sites instantly — no account required",
+  "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
   "author": {
     "name": "ShipStatic",
     "url": "https://shipstatic.com"
   },
-  "homepage": "https://github.com/shipstatic/plugin",
+  "homepage": "https://shipstatic.com",
   "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
-  "keywords": ["deploy", "static-sites", "hosting", "cli", "shipstatic", "ai-agents"]
+  "keywords": [
+    "shipstatic",
+    "deploy",
+    "hosting",
+    "static-site",
+    "static-hosting",
+    "web-hosting",
+    "website",
+    "ai",
+    "agent"
+  ]
 }

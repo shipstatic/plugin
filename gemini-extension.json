@@ -1,11 +1,14 @@
 {
   "name": "ship",
   "version": "2.0.0",
-  "description": "Deploy static sites instantly — no account required",
+  "description": "Deploy static websites, landing pages, and prototypes instantly from Gemini CLI. Free, no account needed.",
   "mcpServers": {
     "shipstatic": {
       "command": "npx",
-      "args": ["-y", "@shipstatic/mcp@1"],
+      "args": [
+        "-y",
+        "@shipstatic/mcp@1"
+      ],
       "env": {
         "SHIP_VIA": "gmn"
       }
