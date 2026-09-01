@@ -80,6 +80,26 @@ creates the GitHub Release. The version lives in all three manifests at once.
 git tag -a v2.0.1 -m "…" && git push origin v2.0.1
 ```
 
+## The sitting is DONE (2026-09-02), and what it proved
+
+The chat-level walk ran against a live Gemini session (0.59.0-preview.0,
+Gemini API key auth): the agent loop invoked `deployments_upload` from this
+extension's MCP server, the deploy landed on production with **`via: "gmn"`**,
+the reply surfaced both the live URL and the claim URL as the instructions
+teach, and the site served. Run headlessly (`gemini --yolo -p …`), which
+leaves two small residues unwalked, recorded rather than implied: the
+interactive tool-approval UX (`--yolo` skips it) and the authed leg INSIDE
+Gemini (`gemini extensions config shipstatic "API Key"` is an interactive
+keychain prompt; the same stdio server's authed path is proven elsewhere).
+
+Two host facts from the same day, worth more than they look: **Google retired
+individual Google-login for Gemini CLI** (every build answers "migrate to the
+Antigravity suite"), so the working auth is a Gemini API key, and the CLI
+CACHES its auth choice in `~/.gemini/settings.json`
+(`security.auth.selectedType`) — a dead cached `oauth-personal` makes even
+`GEMINI_API_KEY` runs fail with the Code Assist error, which reads as a key
+problem and is not.
+
 ## The identifier is `shipstatic` (decided 2026-09-02, at the walk)
 
 `name` was `ship` until 3.0.0, deferred because it is the install identity in
