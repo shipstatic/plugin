@@ -33,12 +33,12 @@ For permanent deployments, custom domains, and account tools, get a free API key
 | `domains_list` | List all domains with their linked deployment and verification status |
 | `domains_get` | Get domain details including linked deployment, verification status, and labels |
 | `domains_records` | Get the DNS records you need to configure at your DNS provider |
-| `domains_dns` | Look up which DNS provider hosts a domain (e.g. Cloudflare, Namecheap) |
+| `domains_dns` | The DNS provider recorded for a domain, if known (e.g. Cloudflare, Namecheap) |
 | `domains_share` | Get a shareable link so someone else can see the required DNS records |
 | `domains_validate` | Check if a domain name is valid and available before connecting it |
 | `domains_verify` | Check if DNS is configured correctly after you set up the records |
 | `domains_delete` | Permanently disconnect and delete a custom domain |
-| `whoami` | Get your account details including email, plan, and usage |
+| `whoami` | Your account's email, name, plan, current usage and plan caps |
 
 ## Agent Skills: Claude Code, Cursor, and 30+ tools
 
