@@ -38,7 +38,7 @@ For permanent deployments, custom domains, and account tools, get a free API key
 | `domains_validate` | Check if a domain name is valid and available before connecting it |
 | `domains_verify` | Check if DNS is configured correctly after you set up the records |
 | `domains_delete` | Permanently disconnect and delete a custom domain |
-| `whoami` | Your account's email, name, plan, current usage and plan caps |
+| `whoami` | Your email and name, and the account's plan, usage and caps |
 
 ## Agent Skills: Claude Code, Cursor, and 30+ tools
 
