@@ -41,11 +41,16 @@ jobs:
       - name: Detect SKILL.md drift from canonical (npm/ship/SKILL.md)
         # The canonical SKILL.md lives next to the @shipstatic/ship CLI it teaches.
         # This plugin's copy must stay byte-identical — drift = stale instructions.
+        # Each branch is held to ship's branch of the same name (a pull request
+        # to its base), so a change made on development is checked against
+        # ship's development rather than waiting for main.
+        env:
+          BRANCH: ${{ github.base_ref || github.ref_name }}
         run: |
-          curl -fsSL https://raw.githubusercontent.com/shipstatic/ship/main/SKILL.md \
+          curl -fsSL "https://raw.githubusercontent.com/shipstatic/ship/${BRANCH}/SKILL.md" \
             -o /tmp/canonical-SKILL.md
           if ! diff -q /tmp/canonical-SKILL.md skills/using-ship/SKILL.md; then
-            echo "::error title=SKILL drift detected::skills/using-ship/SKILL.md has drifted from https://github.com/shipstatic/ship/blob/main/SKILL.md. Sync with: cp ../../npm/ship/SKILL.md skills/using-ship/SKILL.md"
+            echo "::error title=SKILL drift detected::skills/using-ship/SKILL.md has drifted from https://github.com/shipstatic/ship/blob/${BRANCH}/SKILL.md. Sync with: cp ../../npm/ship/SKILL.md skills/using-ship/SKILL.md"
             diff /tmp/canonical-SKILL.md skills/using-ship/SKILL.md || true
             exit 1
           fi
