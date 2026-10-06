@@ -52,7 +52,7 @@ The repo also ships `skills/using-ship/SKILL.md`, which teaches the [ShipStatic 
 | **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
 | **[VS Code](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the Marketplace |
 | **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
-| **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v2` |
+| **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v3` |
 | **[Agent Skill](https://www.shipstatic.com/SKILL.md)** | One file, for any skills-aware tool |
 
 ## License
