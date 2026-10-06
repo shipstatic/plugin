@@ -14,7 +14,7 @@ Ask Gemini to deploy a site. No API key, no sign-up, no configuration. Your site
 
 Deployments without an API key are public and expire in 3 days. The response includes a **claim URL** so you can keep the site permanently.
 
-Want a private site? Ask Gemini to set a password when deploying. Visitors will be prompted to unlock before viewing, on the deployment URL and on any custom domains pointing at it.
+Want a private site? Ask Gemini to publish with ShipStatic's built-in password protection. Visitors will be prompted to unlock before viewing, on the deployment URL and on any custom domains pointing at it.
 
 ### API key (optional)
 
