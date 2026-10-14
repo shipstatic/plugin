@@ -2,7 +2,7 @@
   "name": "shipstatic",
   "displayName": "ShipStatic",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": {
     "name": "ShipStatic",
     "url": "https://shipstatic.com"
