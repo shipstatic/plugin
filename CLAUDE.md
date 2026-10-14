@@ -1,6 +1,28 @@
 # CLAUDE.md
 
-Claude Code instructions for the **ShipStatic Gemini CLI extension**.
+Claude Code instructions for **`shipstatic/plugin`, ShipStatic's plugin for
+coding agents**.
+
+## What this repo is, and what it is not
+
+ShipStatic reaches AI hosts in two ways (the monorepo's
+`integrations/CLAUDE.md`, "Connectors and the plugin"):
+
+- **Connectors** are dedicated submissions to a chat app's directory, each a
+  URL of its own: the ChatGPT listing (its own repo, `shipstatic/gpt`) and the
+  Claude directory listing. **Nothing here is a connector**, and OpenAI
+  calling its listing a "plugin" makes it no relative of this repo.
+- **This repo is the plugin:** the package coding agents install from a repo
+  (Gemini CLI, Claude Code, Cursor, and the hosts reading their formats). A
+  plugin is code we ship, so it never earns a channel door, and the URL it
+  names is the plain `https://mcp.shipstatic.com`.
+
+The repo is moving to the shape AgentMail's plugin has: one `.mcp.json` with
+the plain URL, one deploy skill, a manifest per host, and Gemini on the hosted
+server rather than stdio. The plan is the monorepo's `plan-plugin.md`; the
+rest of this file describes the repo as it stands until that lands.
+
+## Today: the Gemini CLI extension
 
 **`shipstatic/plugin`**, installed with `gemini extensions install`. Since
 2.0.0 it is an **MCP host**: the manifest registers the local stdio server, so
@@ -24,6 +46,12 @@ skills/using-ship/SKILL.md     # VENDORED from npm/ship, never edited here
 ```
 
 ## Why stdio rather than the hosted URL
+
+**Decided against, 2026-10-14, effective at 4.0.0** (`plan-plugin.md` §3 and
+§4): the reason below is real, and the deploy skill's route answers it for
+every host. A folder on disk deploys with `npx -y @shipstatic/ship <folder>`
+from the agent's shell, so the plugin can name the hosted URL and stay one
+shape. The paragraph stays true of 3.x until that release.
 
 Gemini CLI is a terminal agent working on a folder that already exists on the
 user's disk. The stdio server takes a filesystem PATH; the hosted door takes
