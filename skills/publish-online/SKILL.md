@@ -92,7 +92,9 @@ Then:
   Tell the user to replace it, with a new key from
   https://my.shipstatic.com/api-key, where it is set: in `SHIP_TOKEN` if that
   is set (it comes first), otherwise by running
-  `npx -y @shipstatic/ship@3 config`.
+  `npx -y @shipstatic/ship@3 config`. Then stop: don't publish another way,
+  with no account or through the upload, unless the user asks. Another way can
+  put the site in another account, or in none.
 - If publishing fails otherwise, tell the user what the message says. Fix what
   you can, for example a file type that isn't allowed, files that are too
   large, or a project folder where its build folder was meant, and publish
