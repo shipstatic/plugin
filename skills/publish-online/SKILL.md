@@ -1,6 +1,6 @@
 ---
 name: publish-online
-description: Publish a site, page, report, dashboard, slide deck, document, portfolio or small web app at a ShipStatic link anyone can open, with no account needed and optional built-in password protection. Use when the user asks to publish something, deploy a static site or a build folder, put it online, or get a link others can open. Not for HTML the user only wants to see, download or keep as a file.
+description: Publish a site, page, report, dashboard, slide deck, document, portfolio or small web app at a ShipStatic link anyone can open, with no account needed and optional built-in password protection. Use when the user asks to publish something, deploy or host a static site or a build folder, put it online, or get a link others can open. Not for HTML the user only wants to see, download or keep as a file.
 ---
 
 # Publish online

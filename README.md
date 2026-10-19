@@ -72,7 +72,6 @@ Ask for ShipStatic's built-in password protection. Visitors have to type the pas
 | **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
 | **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v3` |
 | **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
-| **[Agent Skill](https://www.shipstatic.com/SKILL.md)** | One file, for any skills-aware tool |
 
 [Support](https://www.shipstatic.com/support) • [Privacy](https://www.shipstatic.com/privacy) • [Terms](https://www.shipstatic.com/terms)
 

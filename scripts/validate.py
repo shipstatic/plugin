@@ -139,8 +139,14 @@ def check_package():
     elif pins != majors:
         fail(f"the plugin's major {sorted(majors)} is not the CLI major its skill runs ({pins.pop()})")
 
+    # One skill, by decision (plan-plugin.md D3): the plugin does one job.
+    # A second skill is a decision recorded there first, then a line here.
+    folders = sorted(os.listdir("skills"))
+    if folders != ["publish-online"]:
+        fail(f"skills/ holds {folders}, not the one skill ['publish-online']")
+
     # Each skill is named for its folder.
-    for folder in sorted(os.listdir("skills")):
+    for folder in folders:
         skill = os.path.join("skills", folder, "SKILL.md")
         if not os.path.isfile(skill):
             fail(f"skills/{folder}: has no SKILL.md")
