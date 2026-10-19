@@ -3,7 +3,7 @@
 release.yml on the tagged commit.
 
     python3 scripts/validate.py              # the package and the history
-    python3 scripts/validate.py --tag v4.0.0 # also: the tag equals every version
+    python3 scripts/validate.py --tag vX.Y.Z # also: the tag equals every version
 
 Every manifest is a file a host reads with no import, so the facts they share
 (the name, the version, the one server's URL) are restated, and this script is
