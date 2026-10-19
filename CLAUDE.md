@@ -46,8 +46,11 @@ otherwise the hosted `deployments_upload` takes the files inline. It reports
 from what the deploy returned (a `claim` link and an `expires` time mean the
 site has no account yet), never from whether the host is connected.
 
-`@3` pins the CLI's major, as the GitHub Action's install line does: the
-plugin moves to a new major in a release of its own, never silently.
+`@3` pins the CLI's major, as the GitHub Action's install line does, and the
+plugin's own major is that number: the plugin is 3.x while its skill runs
+`@shipstatic/ship@3`, and it moves to 4 only in the release whose skill runs
+`@4`. Minor and patch are the plugin's own, so a ship release forces no plugin
+release. `scripts/validate.py` holds the pin and the major equal.
 
 The skill's text is owned here. The ChatGPT listing (`integrations/gpt`) and
 `www.shipstatic.com/SKILL.md` carry copies, held byte-identical by the
@@ -103,7 +106,7 @@ Tag-driven and branch-agnostic. Merge `development` into `main`, let
 `validate` pass on that commit, then tag it:
 
 ```bash
-git tag -a v4.0.0 -m "4.0.0" && git push origin v4.0.0
+git tag -a v3.1.0 -m "3.1.0" && git push origin v3.1.0
 ```
 
 `release.yml` validates the tagged commit, checks the tag against every

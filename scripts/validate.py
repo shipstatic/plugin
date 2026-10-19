@@ -128,6 +128,17 @@ def check_package():
         for key in ("logo", "composerIcon"):
             relative_path_exists(path, manifest.get("interface", {}).get(key))
 
+    # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
+    # plugin's major says which N, as the GitHub Action's major does. A move
+    # to the next CLI major is the plugin's next major, never a silent one.
+    with open("skills/publish-online/SKILL.md", encoding="utf-8") as f:
+        pins = set(re.findall(r"@shipstatic/ship@(\d+)\b", f.read()))
+    majors = {str(v).split(".")[0] for v in versions.values()}
+    if len(pins) != 1:
+        fail(f"skills/publish-online/SKILL.md: pins the CLI at {sorted(pins) or 'no'} majors, not one")
+    elif pins != majors:
+        fail(f"the plugin's major {sorted(majors)} is not the CLI major its skill runs ({pins.pop()})")
+
     # Each skill is named for its folder.
     for folder in sorted(os.listdir("skills")):
         skill = os.path.join("skills", folder, "SKILL.md")
