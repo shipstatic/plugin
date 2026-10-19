@@ -19,18 +19,16 @@ published with no account, and that is the normal way, not a fallback.
 
 ## Two separate questions
 
-1. **How the files travel.** You choose: the ShipStatic command for a folder
-   on disk, or the `deployments_upload` tool for files you send in the call
-   ("Publish" below). Both ways work with no account, and both return the
-   same fields.
-2. **Where the site lands.** You don't choose this and you don't check it
-   first. With nothing set up, the site has no account. If the user has set
-   up an account for the way you used, it goes into that account. The result
-   tells you which ("Tell the user" below).
-
-The two ways have separate setups: connecting the ShipStatic MCP server to an
-account does not set up the command, and a key saved for the command does not
-connect the MCP server.
+1. **How the files travel: you choose.** There are two ways, and both work
+   with no account:
+   - **The CLI:** `npx -y @shipstatic/ship@3 <folder> --json`, for a folder on
+     disk.
+   - **The upload:** the ShipStatic MCP server's `deployments_upload` tool,
+     for files you send in the call.
+2. **Where the site lands: the result tells you.** You don't choose this and
+   you don't check it first. With nothing set up, the site has no account.
+   If the user has set up an account for the way you used, it goes into that
+   account.
 
 ## Find what to publish
 
@@ -61,20 +59,17 @@ connect the MCP server.
 
 ## Publish
 
-Choose how the files travel:
+Choose the way:
 
-- **A shell with Node.js 20.19 or newer:** run
-  `npx -y @shipstatic/ship@3 <folder> --json`. The command reads the files
-  from disk, so nothing passes through the conversation.
-- **When the command can't run** (no shell, no Node.js, or the session can't
-  reach the network) **and the `deployments_upload` tool is available:** call
-  it with all the files of this version, if they are few and small enough to
-  send. Send text files (HTML, CSS, JavaScript, JSON, SVG) as plain text, and
-  binary files such as images and fonts with `encoding: "base64"`.
-- **A large build the command can't send:** never read it into the
-  conversation. Ask the user to let the command reach the network, or tell
-  them what is missing: Node.js for the command, or the ShipStatic MCP server
-  for the upload.
+- **A shell with Node.js 20.19 or newer: the CLI.** It reads the files from
+  disk, so nothing passes through the conversation.
+- **The CLI can't run** (no shell, no Node.js, or no network) **and the files
+  are few and small: the upload.** Send all the files of this version: text
+  files (HTML, CSS, JavaScript, JSON, SVG) as plain text, and binary files
+  such as images and fonts with `encoding: "base64"`.
+- **A large build the CLI can't send:** never read it into the conversation.
+  Ask the user to let the CLI reach the network, or tell them what is missing:
+  Node.js for the CLI, or the ShipStatic MCP server for the upload.
 
 Then:
 
@@ -85,23 +80,24 @@ Then:
 - Don't set an expiry (`ttl`) or a domain unless the user asks for one. Both
   need an account.
 - If the user wants it private or behind a password, use ShipStatic's built-in
-  password protection: `--password <password>` on the command, or `password`
-  on the upload. It works with no account, and it is checked before any file
-  is served. Don't build a password page or script into the site. Make up a
-  new password that is hard to guess, unless the user chose one. Never ask for
-  a password the user already uses somewhere else.
-- If the command fails with `authentication_failed`, the key saved for the
-  command is old or wrong. Publish with no account instead: run the same
-  command with `--config /dev/null` added, and tell the user their saved key
-  was refused and this site has a claim link.
-- If the command fails otherwise, tell the user what its message says. Fix
-  what you can, for example a file type that isn't allowed, or a project
-  folder where its build folder was meant, and publish once more.
+  password protection: `--password <password>` on the CLI, or `password` on
+  the upload. It works with no account, and it is checked before any file is
+  served. Don't build a password page or script into the site. Make up a new
+  password that is hard to guess, unless the user chose one. Never ask for a
+  password the user already uses somewhere else.
+- If the CLI fails with `authentication_failed`, the key saved for it is old
+  or wrong. Publish with no account instead: run the CLI again with
+  `--config /dev/null` added, and tell the user their saved key was refused
+  and this site has a claim link.
+- If publishing fails otherwise, tell the user what the message says. Fix what
+  you can, for example a file type that isn't allowed, files that are too
+  large, or a project folder where its build folder was meant, and publish
+  once more.
 
 ## Tell the user
 
-Read the result. Both ways return the same fields. Never decide from whether
-you are connected, or from which way you used.
+Both ways return the same fields. Read them; never decide from whether you
+are connected, or from which way you used.
 
 - **The result has a `claim` link** (the usual case): the site has no account.
   Give the link (`url`), say it stays up for 3 days, and give the claim link:
@@ -113,9 +109,7 @@ you are connected, or from which way you used.
 
 - **The result has no `claim` link:** the site is already in the user's
   ShipStatic account and stays until they delete it. Tell them just that,
-  with the link. It is the account the MCP server is connected to (for the
-  upload), or the account the command is set up with (for the command); the
-  result doesn't name it, so don't guess which.
+  with the link. The result doesn't say which account, so don't guess.
 - The password, if you set one. A password the user never sees locks them out.
 
 Keep the reply short. The links matter more than a summary of the files.
@@ -127,25 +121,24 @@ a new link, and the earlier one keeps working until it expires. Say which link
 is the new one, and that the claim link of the version they want to keep is
 the one to open.
 
-## When to stop or decline
+## When to decline
 
-- If the request needs a server (an API, a database, sign-in for the people
-  who open the link), say that ShipStatic publishes static files such as HTML,
-  and offer a static version if one would do the job.
-- If publishing is refused, tell the user what the message says. Fix what you
-  can, for example a file type that isn't allowed or files that are too large,
-  and publish once more.
+If the request needs a server (an API, a database, sign-in for the people who
+open the link), say that ShipStatic publishes static files such as HTML, and
+offer a static version if one would do the job.
 
 ## Accounts, only when the user asks
 
 Bring up an account only when the user asks to see or manage what they have
-published, to use their own domain, or to publish into their account.
+published, to use their own domain, or to publish into their account. The two
+ways are set up separately:
 
-- A site published with no account moves into the user's account through its
-  claim link, whichever way it was sent.
-- For the MCP server's account tools, the host asks the user to sign in when
-  one is first used. If a ShipStatic account tool is refused and no sign-in
-  starts, the user can see and manage their sites at https://my.shipstatic.com.
-- For the command to publish straight into their account, the user runs
-  `npx -y @shipstatic/ship@3 config` once, with an API key from
+- **A site already published with no account** moves into the user's account
+  through its claim link, whichever way it was sent.
+- **The upload** goes into an account once the ShipStatic MCP server is
+  connected to one. The host asks the user to sign in when an account tool is
+  first used. If an account tool is refused and no sign-in starts, the user
+  can see and manage their sites at https://my.shipstatic.com.
+- **The CLI** publishes into an account once the user runs
+  `npx -y @shipstatic/ship@3 config`, with an API key from
   https://my.shipstatic.com/api-key.
