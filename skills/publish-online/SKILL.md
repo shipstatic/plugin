@@ -87,9 +87,13 @@ Then:
   is served. Don't build a password page or script into the site. Make up a
   new password that is hard to guess, unless the user chose one. Never ask for
   a password the user already uses somewhere else.
-- If the command fails, tell the user what its message says. Fix what you can,
-  for example a file type that isn't allowed, or a project folder where its
-  build folder was meant, and publish once more.
+- If the command fails with `authentication_failed`, the key saved for the
+  command is old or wrong. Publish with no account instead: run the same
+  command with `--config /dev/null` added, and tell the user their saved key
+  was refused and this site has a claim link.
+- If the command fails otherwise, tell the user what its message says. Fix
+  what you can, for example a file type that isn't allowed, or a project
+  folder where its build folder was meant, and publish once more.
 
 ## Tell the user
 
