@@ -1,0 +1,48 @@
+{
+  "name": "shipstatic",
+  "version": "4.0.0",
+  "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
+  "author": {
+    "name": "ShipStatic",
+    "email": "hello@shipstatic.com",
+    "url": "https://shipstatic.com"
+  },
+  "homepage": "https://shipstatic.com",
+  "repository": "https://github.com/shipstatic/plugin",
+  "license": "MIT",
+  "keywords": [
+    "shipstatic",
+    "deploy",
+    "hosting",
+    "static-site",
+    "static-hosting",
+    "web-hosting",
+    "website",
+    "publish",
+    "mcp",
+    "agent"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ShipStatic",
+    "shortDescription": "Deploy static sites instantly",
+    "longDescription": "Ask your agent to put what you made online, and ShipStatic publishes it. A build folder goes up from disk, and a page the agent writes goes up as it is. You get a link you can share right away, and you don't need an account. A site published without one stays up for 3 days, and its claim link lets you keep it. Want it private? Ask for built-in password protection.",
+    "developerName": "ShipStatic",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://shipstatic.com",
+    "privacyPolicyURL": "https://www.shipstatic.com/privacy",
+    "termsOfServiceURL": "https://www.shipstatic.com/terms",
+    "defaultPrompt": [
+      "Build this project and publish it with ShipStatic.",
+      "Make a one-page site for my bakery and give me a link I can share.",
+      "Publish the dist folder with ShipStatic's built-in password protection."
+    ],
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
+}

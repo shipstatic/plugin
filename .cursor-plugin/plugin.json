@@ -1,13 +1,12 @@
 {
   "name": "shipstatic",
   "displayName": "ShipStatic",
+  "version": "4.0.0",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
-  "version": "3.0.1",
   "author": {
     "name": "ShipStatic",
-    "url": "https://shipstatic.com"
+    "email": "hello@shipstatic.com"
   },
-  "publisher": "ShipStatic",
   "homepage": "https://shipstatic.com",
   "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
@@ -19,14 +18,11 @@
     "static-hosting",
     "web-hosting",
     "website",
-    "ai",
+    "publish",
+    "mcp",
     "agent"
   ],
-  "category": "developer-tools",
-  "tags": [
-    "deploy",
-    "static",
-    "hosting"
-  ],
-  "skills": "./skills/"
+  "logo": "assets/logo.png",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
 }

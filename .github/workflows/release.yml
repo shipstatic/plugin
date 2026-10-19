@@ -4,30 +4,49 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
+  check:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Verify tag matches gemini-extension.json version
-        run: |
-          TAG="${GITHUB_REF_NAME#v}"
-          MANIFEST=$(jq -r .version gemini-extension.json)
-          if [ "$TAG" != "$MANIFEST" ]; then
-            echo "::error title=Version mismatch::Tag $GITHUB_REF_NAME does not match gemini-extension.json version ($MANIFEST)"
-            exit 1
-          fi
+      - name: Fetch every branch and tag, for the history check
+        run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: Create GitHub Release
+      - name: The tagged commit validates, and the tag is every manifest's version
+        run: python3 scripts/validate.py --tag "$GITHUB_REF_NAME"
+
+  release:
+    needs: [check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Create the GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
+
+  notify:
+    needs: [check, release]
+    if: failure() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions: {}
+    steps:
+      - name: Post to the alerts channel
+        env:
+          ALERTS_WEBHOOK: ${{ secrets.ALERTS_WEBHOOK }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
-            --generate-notes
+          MESSAGE="🔴 plugin release $GITHUB_REF_NAME failed. Repair: fix on development and tag again, or Re-run failed jobs if only the Release step failed."
+          [ -n "$ALERTS_WEBHOOK" ] || { echo "::error::ALERTS_WEBHOOK is not set on this repository, so this outcome reached nobody"; exit 1; }
+          curl --fail-with-body -sS --form-string "content=$MESSAGE <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID>" "$ALERTS_WEBHOOK"

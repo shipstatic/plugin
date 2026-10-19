@@ -1,9 +1,12 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "shipstatic",
-  "version": "3.0.1",
+  "displayName": "ShipStatic",
+  "version": "4.0.0",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
   "author": {
     "name": "ShipStatic",
+    "email": "hello@shipstatic.com",
     "url": "https://shipstatic.com"
   },
   "homepage": "https://shipstatic.com",
@@ -17,7 +20,8 @@
     "static-hosting",
     "web-hosting",
     "website",
-    "ai",
+    "publish",
+    "mcp",
     "agent"
   ]
 }

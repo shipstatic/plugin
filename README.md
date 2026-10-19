@@ -1,59 +1,76 @@
-# ShipStatic for Gemini CLI
+# ShipStatic plugin for coding agents
 
-Deploy static websites, landing pages, and prototypes instantly from [ShipStatic](https://shipstatic.com), inside Gemini CLI. Free, no account needed.
+Deploy static websites, landing pages, and prototypes instantly from your coding agent. Free, no account needed.
 
-## Gemini CLI
+Ask your agent to put what you made online. It publishes a build folder straight from disk, or a page it just wrote, and gives you a link you can share right away.
+
+## Install
+
+### Cursor
+
+From the Cursor Marketplace:
+
+```
+/add-plugin shipstatic
+```
+
+### Claude Code
+
+```
+/plugin marketplace add shipstatic/plugin
+/plugin install shipstatic@shipstatic
+```
+
+### Codex
+
+```bash
+codex plugin marketplace add shipstatic/plugin
+codex plugin add shipstatic@shipstatic
+```
+
+### Gemini CLI
 
 ```bash
 gemini extensions install https://github.com/shipstatic/plugin
 ```
 
-The extension registers the ShipStatic MCP server ([`@shipstatic/mcp`](https://github.com/shipstatic/mcp)) inside Gemini CLI: all fifteen tools, running on your own machine, deploying folders straight from disk.
+## Use it
 
-Ask Gemini to deploy a site. No API key, no sign-up, no configuration. Your site is live instantly on `*.shipstatic.com`.
+Ask in your own words, for example:
 
-Deployments without an API key are public and expire in 3 days. The response includes a **claim URL** so you can keep the site permanently.
+- "Build this project and publish it with ShipStatic."
+- "Make a one-page site for my bakery and give me a link I can share."
+- "Publish the dist folder with ShipStatic's built-in password protection."
 
-Want a private site? Ask Gemini to publish with ShipStatic's built-in password protection. Visitors will be prompted to unlock before viewing, on the deployment URL and on any custom domains pointing at it.
+The plugin has one skill, `publish-online`, and one MCP server, `https://mcp.shipstatic.com`.
 
-### API key (optional)
+- **A folder on disk** goes online through the ShipStatic CLI, with `npx -y @shipstatic/ship@3`. It needs Node.js 20.19 or newer, and nothing to install.
+- **Files the agent writes** go online through the MCP server's `deployments_upload` tool.
 
-For permanent deployments, custom domains, and account tools, get a free API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key). Gemini asks for it when the extension installs and stores it in your system keychain. One credential, two names: the console mints it as an API key (`ship-...`), and the variable that carries it is the token (`SHIP_TOKEN`).
+## Accounts
 
-### Tools
+You don't need an account to publish. A site published without one stays up for 3 days, and you get a claim link with it. Open the claim link and sign in to keep the site.
 
-| Tool | Description |
-|------|-------------|
-| `deployments_upload` | Deploy a folder and get a live URL instantly, optionally protected by a password |
-| `deployments_list` | List all deployments with their URLs, status, labels, and password protection state |
-| `deployments_get` | Get deployment details including URL, status, file count, size, and labels |
-| `deployments_set` | Update the labels on a deployment for organization and filtering |
-| `deployments_delete` | Permanently delete a deployment and all its files |
-| `domains_set` | Connect a custom domain to your site, switch deployments, or update labels |
-| `domains_list` | List all domains with their linked deployment and verification status |
-| `domains_get` | Get domain details including linked deployment, verification status, and labels |
-| `domains_records` | Get the DNS records you need to configure at your DNS provider |
-| `domains_dns` | The DNS provider recorded for a domain, if known (e.g. Cloudflare, Namecheap) |
-| `domains_share` | Get a shareable link so someone else can see the required DNS records |
-| `domains_validate` | Check if a domain name is valid and available before connecting it |
-| `domains_verify` | Check if DNS is configured correctly after you set up the records |
-| `domains_delete` | Permanently disconnect and delete a custom domain |
-| `whoami` | Your email and name, and the account's plan, usage and caps |
+With a ShipStatic account you can keep every site, see them all and use your own domain:
 
-## Agent Skills: Claude Code, Cursor, and 30+ tools
+- **The MCP server** asks you to sign in when you use an account tool, in hosts that support it. Cursor doesn't yet, so in Cursor you manage your sites at [my.shipstatic.com](https://my.shipstatic.com).
+- **The CLI** publishes into your account once you run `npx -y @shipstatic/ship@3 config` and paste an API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key).
 
-The repo also ships `skills/using-ship/SKILL.md`, which teaches the [ShipStatic CLI](https://github.com/shipstatic/ship) through the open [Agent Skills](https://agentskills.io) standard. Copy it into your tool's skills directory; see [skills-aware tools](https://agentskills.io/clients) for per-tool instructions. The skill needs the CLI available, and `npx -y @shipstatic/ship` needs no install at all.
+## Private sites
+
+Ask for ShipStatic's built-in password protection. Visitors have to type the password before they see anything, on the site's link and on any custom domain pointing at it.
 
 ## Also available
 
 | Surface | Reach it |
 |---------|----------|
-| **[MCP](https://mcp.shipstatic.com)** | Drop `https://mcp.shipstatic.com` into any MCP client |
+| **[MCP](https://mcp.shipstatic.com)** | Add `https://mcp.shipstatic.com` to any MCP client |
 | **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
-| **[VS Code](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the Marketplace |
-| **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
 | **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v3` |
+| **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
 | **[Agent Skill](https://www.shipstatic.com/SKILL.md)** | One file, for any skills-aware tool |
+
+[Support](https://www.shipstatic.com/support) • [Privacy](https://www.shipstatic.com/privacy) • [Terms](https://www.shipstatic.com/terms)
 
 ## License
 

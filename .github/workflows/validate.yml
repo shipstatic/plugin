@@ -7,50 +7,55 @@ on:
     branches: [main, development]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
+  # The job's name is the check main's protection requires: renaming it
+  # unprotects main.
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Validate gemini-extension.json is well-formed JSON
-        run: jq empty gemini-extension.json
+      - name: Fetch every branch and tag, for the history check
+        run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: The extension runs the local MCP server, pinned to its major
-        # Majors pin majors: this manifest resolves @shipstatic/mcp at RUNTIME
-        # (npx), the same consumer class as the GitHub Action's CLI install
-        # line, so the pin freezes at the major for the life of this major.
+      - name: The manifests agree, the paths exist, the history names only ShipStatic
+        run: python3 scripts/validate.py
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Claude Code reads the plugin and its marketplace
+        # Exact-pinned: the validator carries Claude Code's contract, and a
+        # floating pin would change what this check means between two runs.
+        # One warning is expected and allowed: Claude Code does not load a
+        # plugin's root CLAUDE.md, which is this repo's own guidance, never
+        # the plugin's.
         run: |
-          test "$(jq -r '.mcpServers.shipstatic.command' gemini-extension.json)" = "npx"
-          jq -e '.mcpServers.shipstatic.args | index("@shipstatic/mcp@1")' gemini-extension.json
+          npm install --global --no-fund --no-audit @anthropic-ai/claude-code@2.1.303
+          claude plugin validate . --json > report.json || { cat report.json; exit 1; }
+          jq -e '.success' report.json > /dev/null || { cat report.json; exit 1; }
+          unexpected=$(jq '[.manifest.warnings[], (.contents[].warnings[] | select(.message | startswith("CLAUDE.md at the plugin root") | not))] | length' report.json)
+          [ "$unexpected" -eq 0 ] || { cat report.json; exit 1; }
 
-      - name: The via restatement matches the vocabulary
-        # `gmn` restates DeploymentVia.GMN from @shipstatic/types. A manifest
-        # can import nothing, so the copy is fenced as a pinned literal: a
-        # respelling here would silently attribute every Gemini deploy as the
-        # generic `mcp` fallback (the readers drop unknown labels by design).
-        run: test "$(jq -r '.mcpServers.shipstatic.env.SHIP_VIA' gemini-extension.json)" = "gmn"
-
-      - name: The three plugin manifests state one version
-        run: |
-          G=$(jq -r .version gemini-extension.json)
-          C=$(jq -r .version .claude-plugin/plugin.json)
-          R=$(jq -r .version .cursor-plugin/plugin.json)
-          test "$G" = "$C" -a "$G" = "$R"
-
-      - name: Detect SKILL.md drift from canonical (npm/ship/SKILL.md)
-        # The canonical SKILL.md lives next to the @shipstatic/ship CLI it teaches.
-        # This plugin's copy must stay byte-identical — drift = stale instructions.
-        # Each branch is held to ship's branch of the same name (a pull request
-        # to its base), so a change made on development is checked against
-        # ship's development rather than waiting for main.
+  notify:
+    needs: [validate]
+    if: failure() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions: {}
+    steps:
+      - name: Post to the alerts channel
         env:
-          BRANCH: ${{ github.base_ref || github.ref_name }}
+          ALERTS_WEBHOOK: ${{ secrets.ALERTS_WEBHOOK }}
         run: |
-          curl -fsSL "https://raw.githubusercontent.com/shipstatic/ship/${BRANCH}/SKILL.md" \
-            -o /tmp/canonical-SKILL.md
-          if ! diff -q /tmp/canonical-SKILL.md skills/using-ship/SKILL.md; then
-            echo "::error title=SKILL drift detected::skills/using-ship/SKILL.md has drifted from https://github.com/shipstatic/ship/blob/${BRANCH}/SKILL.md. Sync with: cp ../../npm/ship/SKILL.md skills/using-ship/SKILL.md"
-            diff /tmp/canonical-SKILL.md skills/using-ship/SKILL.md || true
-            exit 1
-          fi
+          MESSAGE="🔴 plugin validate failed on $GITHUB_REF_NAME"
+          [ -n "$ALERTS_WEBHOOK" ] || { echo "::error::ALERTS_WEBHOOK is not set on this repository, so this outcome reached nobody"; exit 1; }
+          curl --fail-with-body -sS --form-string "content=$MESSAGE <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID>" "$ALERTS_WEBHOOK"

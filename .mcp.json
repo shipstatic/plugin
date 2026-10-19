@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "shipstatic": {
+      "type": "http",
+      "url": "https://mcp.shipstatic.com"
+    }
+  }
+}

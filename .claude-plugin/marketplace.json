@@ -1,0 +1,16 @@
+{
+  "name": "shipstatic",
+  "owner": {
+    "name": "ShipStatic",
+    "email": "hello@shipstatic.com"
+  },
+  "description": "ShipStatic's plugin for coding agents.",
+  "plugins": [
+    {
+      "name": "shipstatic",
+      "source": "./",
+      "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
+      "category": "development"
+    }
+  ]
+}
