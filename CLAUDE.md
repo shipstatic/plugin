@@ -83,7 +83,13 @@ sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
   under Gemini's `httpUrl`;
 - both marketplace entries are this repo's root, and Codex's sign-in is
   `ON_USE`: sign-in at install would end publishing with no account;
-- each skill is named for its folder;
+- the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
+  no manifest declares hooks, commands, agents, rules or a server of its own,
+  and none of the folders hosts load by name exists (`commands`, `agents`,
+  `hooks`, `rules`, a root `mcp.json` or `SKILL.md`);
+- `skills/` holds exactly `publish-online`, named for its folder, and every
+  mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
+  major;
 - every commit on every remote branch and tag is ShipStatic's, with no
   `Co-Authored-By` trailer. A commit made in GitHub's web interface passes
   with GitHub as its committer.
@@ -109,8 +115,10 @@ Tag-driven and branch-agnostic. Merge `development` into `main`, let
 git tag -a v3.1.0 -m "3.1.0" && git push origin v3.1.0
 ```
 
-`release.yml` validates the tagged commit, checks the tag against every
-manifest's version, and creates the GitHub Release. Released and listed are
+`release.yml` refuses a tag that is not on `main` or whose commit has no
+successful `validate` run, checks the tag against every manifest's version,
+and creates the GitHub Release. Tag after `validate` has passed on `main`;
+a release that ran too early is repaired with "Re-run failed jobs". Released and listed are
 separate states: Cursor reviews every update by hand, so a release reaches the
 Cursor Marketplace only once Cursor approves that commit.
 

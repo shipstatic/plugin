@@ -34,6 +34,10 @@ codex plugin add shipstatic@shipstatic
 gemini extensions install https://github.com/shipstatic/plugin
 ```
 
+Gemini CLI serves paid and API-key plans. Google moved free users to Antigravity CLI.
+
+After installing, start a new chat (in Cursor, reload the window first) so your agent sees the plugin.
+
 ## Use it
 
 Ask in your own words, for example:

@@ -116,9 +116,13 @@ def check_package():
     gemini = data["gemini-extension.json"].get("mcpServers", {})
     if gemini != {NAME: {"httpUrl": URL}}:
         fail(f"gemini-extension.json: mcpServers is {gemini}, not one server at {URL}")
+    # The shape is fixed, so the paths are checked as values, not as files
+    # that happen to exist.
     for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
         if data[path].get("mcpServers") != "./.mcp.json":
             fail(f"{path}: mcpServers does not name ./.mcp.json")
+        if data[path].get("skills") != "./skills/":
+            fail(f"{path}: skills does not name ./skills/")
 
     # The one server is .mcp.json's alone: no manifest declares a server,
     # hooks, commands, agents or rules of its own beside it.
@@ -128,6 +132,11 @@ def check_package():
             extra.append("mcpServers")
         if extra:
             fail(f"{path}: declares {extra}; the plugin is .mcp.json and one skill")
+
+    # Hosts also find components by folder name, with no manifest key at all.
+    for found in ("commands", "agents", "hooks", "rules", "mcp.json", "SKILL.md"):
+        if os.path.exists(found):
+            fail(f"{found}: a host loads it on its own; the plugin is .mcp.json and one skill")
 
     # Every path a manifest names exists.
     for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
@@ -140,13 +149,17 @@ def check_package():
     # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
     # plugin's major says which N, as the GitHub Action's major does. A move
     # to the next CLI major is the plugin's next major, never a silent one.
+    # Every mention of the package must be exactly `@N`: no `@latest`, no
+    # exact version, no bare name.
     with open("skills/publish-online/SKILL.md", encoding="utf-8") as f:
-        pins = set(re.findall(r"@shipstatic/ship@(\d+)\b", f.read()))
+        specs = re.findall(r"@shipstatic/ship(@[^\s`]*)?", f.read())
     majors = {str(v).split(".")[0] for v in versions.values()}
-    if len(pins) != 1:
-        fail(f"skills/publish-online/SKILL.md: pins the CLI at {sorted(pins) or 'no'} majors, not one")
-    elif pins != majors:
-        fail(f"the plugin's major {sorted(majors)} is not the CLI major its skill runs ({pins.pop()})")
+    want = f"@{majors.pop()}" if len(majors) == 1 else None
+    if not specs:
+        fail("skills/publish-online/SKILL.md: never names @shipstatic/ship")
+    for spec in specs:
+        if spec != want:
+            fail(f"skills/publish-online/SKILL.md: runs @shipstatic/ship{spec}, not @shipstatic/ship{want}")
 
     # One skill to start with, by decision (plan-plugin.md D3). A next one,
     # such as a custom domain, is a decision recorded there first, then a

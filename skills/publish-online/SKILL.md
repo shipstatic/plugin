@@ -8,10 +8,8 @@ description: Publish a site, page, report, dashboard, slide deck, document, port
 The user's own instructions come first. Where they say something different
 from this workflow, follow them.
 
-Publish what the user wants online: a site, a page, a report, a dashboard, a
-slide deck, a document, a portfolio or a small web app. Publish when the user
-has asked for it to be online. If they want to see a draft first, show it and
-publish when they say so.
+Publish when the user has asked for something to be online. If they want to
+see a draft first, show it and publish when they say so.
 
 **Publishing needs no account.** Don't ask the user to sign in, connect
 anything, create an account or give a key before publishing. Most sites are
@@ -25,17 +23,19 @@ published with no account, and that is the normal way, not a fallback.
      disk.
    - **The upload:** the ShipStatic MCP server's `deployments_upload` tool,
      for files you send in the call.
-2. **Where the site lands: the result tells you.** You don't choose this and
-   you don't check it first. With nothing set up, the site has no account.
-   If the user has set up an account for the way you used, it goes into that
-   account.
+2. **Where the site lands: the result tells you.** The user's setup decides
+   it, and you don't check it first. With nothing set up, the site has no
+   account. If the user has set up an account for the way you used, it goes
+   into that account.
 
 ## Find what to publish
 
-- **A built site:** a folder with `index.html` at its root, such as `dist/`,
-  `build/` or `out/`. Publish that folder.
-- **A project with a build step:** run its build, then publish the folder it
-  writes.
+- **A project with a build step:** run its build, and once it succeeds,
+  publish the folder it writes. Build first even when an older build folder is
+  already there.
+- **A built site with nothing to build:** a folder with `index.html` at its
+  root, such as `dist/`, `build/` or `out/`. Publish that folder. If the user
+  names a folder, publish that one as it is.
 - **Something new to make:** make the files in a new folder of its own, with
   the start page at `index.html`. Never write them into an existing folder
   such as `dist/` or the project's own files: that overwrites the user's work
@@ -63,7 +63,8 @@ Choose the way:
 
 - **A shell with Node.js 20.19 or newer: the CLI.** It reads the files from
   disk, so nothing passes through the conversation.
-- **The CLI can't run** (no shell, no Node.js, or no network) **and the files
+- **The CLI can't run** (no shell, no Node.js, or the shell can't reach npm
+  or ShipStatic) **and the files
   are few and small: the upload.** Send text files (HTML, CSS, JavaScript,
   JSON, SVG) as plain text, and binary files such as images and fonts with
   `encoding: "base64"`.
@@ -100,6 +101,9 @@ Then:
 Both ways return the same fields. Read them; never decide from whether you
 are connected, or from which way you used.
 
+The `claim` link says who owns the site, and `expires` says how long it
+stays up.
+
 - **The result has a `claim` link** (the usual case): the site has no account.
   Give the link (`url`), say it stays up for 3 days, and give the claim link:
   opening it and signing in keeps the site for good. For example:
@@ -109,8 +113,9 @@ are connected, or from which way you used.
   > https://my.shipstatic.com/claim/… and sign in.
 
 - **The result has no `claim` link:** the site is already in the user's
-  ShipStatic account and stays until they delete it. Tell them just that,
-  with the link. The result doesn't say which account, so don't guess.
+  ShipStatic account. Give the link. If the result has `expires`, say when it
+  expires; if not, it stays until they delete it. The result doesn't say which
+  account, so don't guess.
 - The password, if you set one. A password the user never sees locks them out.
 
 Keep the reply short. The links matter more than a summary of the files.
