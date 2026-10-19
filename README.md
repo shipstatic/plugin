@@ -42,19 +42,23 @@ Ask in your own words, for example:
 - "Make a one-page site for my bakery and give me a link I can share."
 - "Publish the dist folder with ShipStatic's built-in password protection."
 
-The plugin has one skill, `publish-online`, and one MCP server, `https://mcp.shipstatic.com`.
+The plugin has one skill, `publish-online`, and one MCP server, `https://mcp.shipstatic.com`. Your agent picks how the files travel:
 
-- **A folder on disk** goes online through the ShipStatic CLI, with `npx -y @shipstatic/ship@3`. It needs Node.js 20.19 or newer, and nothing to install.
-- **Files the agent writes** go online through the MCP server's `deployments_upload` tool.
+- **A folder on disk** goes through the ShipStatic CLI, with `npx -y @shipstatic/ship@3`. It needs Node.js 20.19 or newer, and nothing to install.
+- **When the CLI can't run** (no Node.js, no network, or a host with no shell), a few small files go through the MCP server's `deployments_upload` tool instead.
 
-## Accounts
+## No account needed
 
-You don't need an account to publish. A site published without one stays up for 3 days, and you get a claim link with it. Open the claim link and sign in to keep the site.
+Publishing needs no account, whichever way the files travel. A site published without one stays up for 3 days, and you get a claim link with it. Open the claim link and sign in to keep the site.
 
-With a ShipStatic account you can keep every site, see them all and use your own domain:
+If you want sites to go straight into your account, each way has its own setup:
 
-- **The MCP server** asks you to sign in when you use an account tool, in hosts that support it. Cursor doesn't yet, so in Cursor you manage your sites at [my.shipstatic.com](https://my.shipstatic.com).
-- **The CLI** publishes into your account once you run `npx -y @shipstatic/ship@3 config` and paste an API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key).
+| | With no account (the default) | Straight into your account |
+|---|---|---|
+| **A folder, through the CLI** | Live for 3 days, with a claim link | Run `npx -y @shipstatic/ship@3 config` once, with an API key from [my.shipstatic.com/api-key](https://my.shipstatic.com/api-key) |
+| **Files, through the MCP server** | Live for 3 days, with a claim link | Sign in when your agent first uses an account tool. Cursor doesn't offer this sign-in yet, so in Cursor use the claim link |
+
+Signing in on one way doesn't set up the other. You can see and manage every site at [my.shipstatic.com](https://my.shipstatic.com).
 
 ## Private sites
 

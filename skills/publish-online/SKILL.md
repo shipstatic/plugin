@@ -1,6 +1,6 @@
 ---
 name: publish-online
-description: Publish a site, page, report, dashboard, slide deck, document, portfolio or small web app at a ShipStatic link anyone can open, with optional built-in password protection. Use when the user asks to publish something, deploy a static site or a build folder, put it online, or get a link others can open. Not for HTML the user only wants to see, download or keep as a file.
+description: Publish a site, page, report, dashboard, slide deck, document, portfolio or small web app at a ShipStatic link anyone can open, with no account needed and optional built-in password protection. Use when the user asks to publish something, deploy a static site or a build folder, put it online, or get a link others can open. Not for HTML the user only wants to see, download or keep as a file.
 ---
 
 # Publish online
@@ -11,8 +11,26 @@ from this workflow, follow them.
 Publish what the user wants online: a site, a page, a report, a dashboard, a
 slide deck, a document, a portfolio or a small web app. Publish when the user
 has asked for it to be online. If they want to see a draft first, show it and
-publish when they say so. Don't ask the user to sign in or connect anything
-first.
+publish when they say so.
+
+**Publishing needs no account.** Don't ask the user to sign in, connect
+anything, create an account or give a key before publishing. Most sites are
+published with no account, and that is the normal way, not a fallback.
+
+## Two separate questions
+
+1. **How the files travel.** You choose: the ShipStatic command for a folder
+   on disk, or the `deployments_upload` tool for files you send in the call
+   ("Publish" below). Both ways work with no account, and both return the
+   same fields.
+2. **Where the site lands.** You don't choose this and you don't check it
+   first. With nothing set up, the site has no account. If the user has set
+   up an account for the way you used, it goes into that account. The result
+   tells you which ("Tell the user" below).
+
+The two ways have separate setups: connecting the ShipStatic MCP server to an
+account does not set up the command, and a key saved for the command does not
+connect the MCP server.
 
 ## Find what to publish
 
@@ -40,7 +58,7 @@ first.
 
 ## Publish
 
-Choose the way by what this session can do:
+Choose how the files travel:
 
 - **A shell with Node.js 20.19 or newer:** run
   `npx -y @shipstatic/ship@3 <folder> --json`. The command reads the files
@@ -57,31 +75,39 @@ Choose the way by what this session can do:
 
 Then:
 
-- Publish straight away. Don't call `whoami` or any other ShipStatic tool
-  first, and don't start a sign-in to publish.
+- Publish straight away. Before publishing, don't call `whoami` or any other
+  ShipStatic tool, don't run `ship whoami` or `ship config`, don't add
+  `--token`, and don't start a sign-in.
 - Publish all the files of a version at once.
-- Don't set an expiry (`ttl`) unless the user asks for one. An expiry needs a
-  connected account.
+- Don't set an expiry (`ttl`) or a domain unless the user asks for one. Both
+  need an account.
 - If the user wants it private or behind a password, use ShipStatic's built-in
   password protection: `--password <password>` on the command, or `password`
-  on the upload. It is checked before any file is served. Don't build a
-  password page or script into the site. Make up a new password that is hard
-  to guess, unless the user chose one. Never ask for a password the user
-  already uses somewhere else.
+  on the upload. It works with no account, and it is checked before any file
+  is served. Don't build a password page or script into the site. Make up a
+  new password that is hard to guess, unless the user chose one. Never ask for
+  a password the user already uses somewhere else.
 - If the command fails, tell the user what its message says. Fix what you can,
   for example a file type that isn't allowed, or a project folder where its
   build folder was meant, and publish once more.
 
 ## Tell the user
 
-Both ways return the same fields. Use what came back:
+Read the result. Both ways return the same fields. Never decide from whether
+you are connected, or from which way you used.
 
-- The link (`url`).
-- A `claim` link and an `expires` time mean the site was published without an
-  account, and it stays up for 3 days. Show the claim link: opening it and
-  signing in keeps the site in the user's ShipStatic account.
-- No claim link means the site went into an account. For the command, that is
-  the account the ShipStatic CLI is set up with.
+- **The result has a `claim` link** (the usual case): the site has no account.
+  Give the link (`url`), say it stays up for 3 days, and give the claim link:
+  opening it and signing in keeps the site for good. For example:
+
+  > Your site is live: https://example-site-abc1234.shipstatic.com
+  > It stays up for 3 days. To keep it, open
+  > https://my.shipstatic.com/claim/… and sign in.
+
+- **The result has no `claim` link:** the site is in an account, and it stays
+  until the user deletes it. That is the account the MCP server is connected
+  to (for the upload), or the account the command is set up with (for the
+  command). The result doesn't name the account, so don't guess which one.
 - The password, if you set one. A password the user never sees locks them out.
 
 Keep the reply short. The links matter more than a summary of the files.
@@ -102,14 +128,16 @@ the one to open.
   can, for example a file type that isn't allowed or files that are too large,
   and publish once more.
 
-## Accounts
+## Accounts, only when the user asks
 
 Bring up an account only when the user asks to see or manage what they have
-published, or to use their own domain.
+published, to use their own domain, or to publish into their account.
 
-- With the ShipStatic MCP server connected to an account, uploads go to that
-  account, with no claim link and no 3-day limit.
-- The command has its own setup. If the user wants folders to go straight into
-  their account, they run `npx -y @shipstatic/ship@3 config` once.
-- If a ShipStatic account tool is refused and no sign-in starts, the user can
-  see and manage their sites at https://my.shipstatic.com.
+- A site published with no account moves into the user's account through its
+  claim link, whichever way it was sent.
+- For the MCP server's account tools, the host asks the user to sign in when
+  one is first used. If a ShipStatic account tool is refused and no sign-in
+  starts, the user can see and manage their sites at https://my.shipstatic.com.
+- For the command to publish straight into their account, the user runs
+  `npx -y @shipstatic/ship@3 config` once, with an API key from
+  https://my.shipstatic.com/api-key.
