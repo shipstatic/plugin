@@ -36,6 +36,12 @@ gemini extensions install https://github.com/shipstatic/plugin
 
 Gemini CLI serves paid and API-key plans. Google moved free users to Antigravity CLI.
 
+### Just the skill, in any skills-aware tool
+
+```bash
+npx skills add shipstatic/plugin
+```
+
 After installing, start a new chat (in Cursor, reload the window first) so your agent sees the plugin.
 
 ## Use it
