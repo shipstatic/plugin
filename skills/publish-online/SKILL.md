@@ -45,13 +45,15 @@ Choose the way by what this session can do:
 - **A shell with Node.js 20.19 or newer:** run
   `npx -y @shipstatic/ship@3 <folder> --json`. The command reads the files
   from disk, so nothing passes through the conversation.
-- **Otherwise, when the `deployments_upload` tool is available:** call it with
-  all the files of this version. Send text files (HTML, CSS, JavaScript, JSON,
-  SVG) as plain text, and binary files such as images and fonts with
-  `encoding: "base64"`. Never read a large build into the conversation to
-  upload it.
-- **Neither:** tell the user what is missing: Node.js for the command, or the
-  ShipStatic MCP server for the upload.
+- **When the command can't run** (no shell, no Node.js, or the session can't
+  reach the network) **and the `deployments_upload` tool is available:** call
+  it with all the files of this version, if they are few and small enough to
+  send. Send text files (HTML, CSS, JavaScript, JSON, SVG) as plain text, and
+  binary files such as images and fonts with `encoding: "base64"`.
+- **A large build the command can't send:** never read it into the
+  conversation. Ask the user to let the command reach the network, or tell
+  them what is missing: Node.js for the command, or the ShipStatic MCP server
+  for the upload.
 
 Then:
 
@@ -69,9 +71,6 @@ Then:
 - If the command fails, tell the user what its message says. Fix what you can,
   for example a file type that isn't allowed, or a project folder where its
   build folder was meant, and publish once more.
-- If the command can't reach the network because the session limits it, ask
-  to run it with network access. When the files are few and small, the upload
-  is the other way.
 
 ## Tell the user
 
