@@ -5,9 +5,6 @@ description: Publish a site, page, report, dashboard, slide deck, document, port
 
 # Publish online
 
-The user's own instructions come first. Where they say something different
-from this workflow, follow them.
-
 Publish when the user has asked for something to be online. If they want to
 see a draft first, show it and publish when they say so.
 
@@ -36,6 +33,11 @@ published with no account, and that is the normal way, not a fallback.
 - **A built site with nothing to build:** a folder with `index.html` at its
   root, such as `dist/`, `build/` or `out/`. Publish that folder. If the user
   names a folder, publish that one as it is.
+- **What you publish is a static site:** `index.html` at the root of the
+  folder, with the files it uses beside it. If a build makes a server app
+  instead (no `index.html`), don't publish it: say ShipStatic publishes static
+  sites, and offer to set up a static export. Don't change the project's
+  settings without asking.
 - **Something new to make:** make the files in a new folder of its own, with
   the start page at `index.html`. Never write them into an existing folder
   such as `dist/` or the project's own files: that overwrites the user's work
@@ -86,11 +88,9 @@ Then:
   served. Don't build a password page or script into the site. Make up a new
   password that is hard to guess, unless the user chose one. Never ask for a
   password the user already uses somewhere else.
-- If the CLI fails with `authentication_failed`, the key it holds is old or
-  wrong. Publish with no account instead: run the CLI again with `SHIP_TOKEN`
-  unset for that one command and `--config` pointing at a file you write
-  holding `{}`. Tell the user their saved key was refused and this site has a
-  claim link.
+- If the CLI fails with `authentication_failed`, the key it is set up with was
+  refused. Tell the user, and that running `npx -y @shipstatic/ship@3 config`
+  with a new key from https://my.shipstatic.com/api-key fixes it.
 - If publishing fails otherwise, tell the user what the message says. Fix what
   you can, for example a file type that isn't allowed, files that are too
   large, or a project folder where its build folder was meant, and publish
@@ -101,8 +101,8 @@ Then:
 Both ways return the same fields. Read them; never decide from whether you
 are connected, or from which way you used.
 
-The `claim` link says who owns the site, and `expires` says how long it
-stays up.
+The `claim` link says who owns the site, and `expires` says whether it
+expires.
 
 - **The result has a `claim` link** (the usual case): the site has no account.
   Give the link (`url`), say it stays up for 3 days, and give the claim link:

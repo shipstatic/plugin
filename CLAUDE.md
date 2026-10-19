@@ -83,10 +83,14 @@ sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
   under Gemini's `httpUrl`;
 - both marketplace entries are this repo's root, and Codex's sign-in is
   `ON_USE`: sign-in at install would end publishing with no account;
+- each manifest, and each marketplace entry, holds only the keys it holds
+  today (the package's shape is fixed, so a new key is a decision recorded
+  in `plan-plugin.md` first); both marketplaces are named `shipstatic`, and
+  Codex's policy is exactly `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
-  no manifest declares hooks, commands, agents, rules or a server of its own,
-  and none of the folders hosts load by name exists (`commands`, `agents`,
-  `hooks`, `rules`, a root `mcp.json` or `SKILL.md`);
+  every path is a string inside the repo, and none of the folders hosts load
+  by name exists (`commands`, `agents`, `hooks`, `rules`, a root `mcp.json`
+  or `SKILL.md`);
 - `skills/` holds exactly `publish-online`, named for its folder, and every
   mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
   major;
@@ -116,7 +120,7 @@ git tag -a v3.1.0 -m "3.1.0" && git push origin v3.1.0
 ```
 
 `release.yml` refuses a tag that is not on `main` or whose commit has no
-successful `validate` run, checks the tag against every manifest's version,
+successful run of `validate.yml`, checks the tag against every manifest's version,
 and creates the GitHub Release. Tag after `validate` has passed on `main`;
 a release that ran too early is repaired with "Re-run failed jobs". Released and listed are
 separate states: Cursor reviews every update by hand, so a release reaches the

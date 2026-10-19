@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
-      checks: read
+      actions: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,14 +29,14 @@ jobs:
         # publish a Release nobody merged.
         run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
 
-      - name: The full validate job passed on the tagged commit
+      - name: validate.yml passed on the tagged commit
         # The one gate, read rather than restated: validate.yml runs the
-        # checks and Claude Code's own validator, and a Release needs its
-        # success on this exact commit.
+        # checks and Claude Code's own validator, and a Release needs a
+        # successful run of that workflow on this exact commit.
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          passed=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?check_name=validate" --jq '[.check_runs[] | select(.conclusion == "success")] | length')
+          passed=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/validate.yml/runs?head_sha=$GITHUB_SHA&status=success" --jq '.total_count')
           [ "$passed" -gt 0 ] || { echo "::error::validate has not passed on $GITHUB_SHA: merge to main, wait for it, then tag"; exit 1; }
 
       - name: The tagged commit validates, and the tag is every manifest's version

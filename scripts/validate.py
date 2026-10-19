@@ -43,6 +43,29 @@ VERSIONED = [
     "gemini-extension.json",
 ]
 
+# The package's shape is fixed, so each manifest may hold only the keys it
+# holds today. A key outside this list (a second server, hooks, an app, a
+# context file) is a change to the plugin's shape, decided in plan-plugin.md
+# first and added here after.
+KEYS = {
+    ".claude-plugin/plugin.json": {"$schema", "name", "displayName", "version", "description",
+                                   "author", "homepage", "repository", "license", "keywords"},
+    ".claude-plugin/marketplace.json": {"name", "owner", "description", "plugins"},
+    ".codex-plugin/plugin.json": {"name", "version", "description", "author", "homepage",
+                                  "repository", "license", "keywords", "skills", "mcpServers",
+                                  "interface"},
+    ".agents/plugins/marketplace.json": {"name", "interface", "plugins"},
+    ".cursor-plugin/plugin.json": {"name", "version", "description", "author", "homepage",
+                                   "repository", "license", "keywords", "logo", "skills",
+                                   "mcpServers"},
+    "gemini-extension.json": {"name", "version", "description", "mcpServers"},
+    ".mcp.json": {"mcpServers"},
+}
+ENTRY_KEYS = {
+    ".claude-plugin/marketplace.json": {"name", "source", "description", "category"},
+    ".agents/plugins/marketplace.json": {"name", "source", "policy", "category"},
+}
+
 failures = []
 
 
@@ -60,7 +83,8 @@ def load(path):
 
 
 def relative_path_exists(owner, value):
-    if not isinstance(value, str) or value.startswith(("http://", "https://")):
+    if not isinstance(value, str):
+        fail(f"{owner}: path {value!r} is not a string")
         return
     if value.startswith("/") or ".." in value.split("/"):
         fail(f"{owner}: path {value!r} must be relative, inside the repo")
@@ -73,6 +97,16 @@ def check_package():
     if any(value is None for value in data.values()):
         return
 
+    for path, allowed in KEYS.items():
+        extra = sorted(set(data[path]) - allowed)
+        if extra:
+            fail(f"{path}: carries {extra}, outside the plugin's fixed shape")
+    for path, allowed in ENTRY_KEYS.items():
+        for entry in data[path].get("plugins", []):
+            extra = sorted(set(entry) - allowed)
+            if extra:
+                fail(f"{path}: its entry carries {extra}, outside the plugin's fixed shape")
+
     # One name.
     names = {
         ".claude-plugin/plugin.json": data[".claude-plugin/plugin.json"]["name"],
@@ -81,6 +115,8 @@ def check_package():
         "gemini-extension.json": data["gemini-extension.json"]["name"],
     }
     for market in (".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
+        if data[market].get("name") != NAME:
+            fail(f"{market}: the marketplace is named {data[market].get('name')!r}, not {NAME!r}")
         entries = data[market].get("plugins", [])
         if len(entries) != 1:
             fail(f"{market}: lists {len(entries)} plugins, not one")
@@ -98,8 +134,8 @@ def check_package():
         fail(".agents/plugins/marketplace.json: source is not the repo root")
     # Sign-in comes at first use: an account at install would end publishing
     # with no account (plan-plugin.md §2).
-    if codex_entry.get("policy", {}).get("authentication") != "ON_USE":
-        fail(".agents/plugins/marketplace.json: authentication must be ON_USE")
+    if codex_entry.get("policy") != {"installation": "AVAILABLE", "authentication": "ON_USE"}:
+        fail(".agents/plugins/marketplace.json: policy must be installation AVAILABLE, authentication ON_USE")
 
     # One version.
     versions = {path: data[path].get("version") for path in VERSIONED}
@@ -124,15 +160,6 @@ def check_package():
         if data[path].get("skills") != "./skills/":
             fail(f"{path}: skills does not name ./skills/")
 
-    # The one server is .mcp.json's alone: no manifest declares a server,
-    # hooks, commands, agents or rules of its own beside it.
-    for path in (".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
-        extra = sorted({"hooks", "commands", "agents", "rules"} & set(data[path]))
-        if path == ".claude-plugin/plugin.json" and "mcpServers" in data[path]:
-            extra.append("mcpServers")
-        if extra:
-            fail(f"{path}: declares {extra}; the plugin is .mcp.json and one skill")
-
     # Hosts also find components by folder name, with no manifest key at all.
     for found in ("commands", "agents", "hooks", "rules", "mcp.json", "SKILL.md"):
         if os.path.exists(found):
@@ -142,9 +169,11 @@ def check_package():
     for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
         manifest = data[path]
         for key in ("skills", "mcpServers", "logo"):
-            relative_path_exists(path, manifest.get(key))
+            if key in manifest:
+                relative_path_exists(path, manifest[key])
         for key in ("logo", "composerIcon"):
-            relative_path_exists(path, manifest.get("interface", {}).get(key))
+            if key in manifest.get("interface", {}):
+                relative_path_exists(path, manifest["interface"][key])
 
     # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
     # plugin's major says which N, as the GitHub Action's major does. A move
