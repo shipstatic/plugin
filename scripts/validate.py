@@ -61,6 +61,22 @@ KEYS = {
     "gemini-extension.json": {"name", "version", "description", "mcpServers"},
     ".mcp.json": {"mcpServers"},
 }
+# The package is exactly these files. Hosts load more than manifests name
+# (Gemini a root GEMINI.md, Cursor and Codex a root plugin.json, Claude Code
+# a commands/ folder), so the list of files is the one check that covers
+# every way in at once. A new file is a decision recorded first.
+FILES = {
+    ".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json",
+    ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json",
+    ".github/workflows/release.yml", ".github/workflows/validate.yml", ".mcp.json",
+    "AGENTS.md", "CLAUDE.md", "LICENSE", "README.md", "assets/logo.png",
+    "gemini-extension.json", "scripts/validate.py", "skills/publish-online/SKILL.md",
+}
+INTERFACE_KEYS = {
+    "displayName", "shortDescription", "longDescription", "developerName", "category",
+    "capabilities", "websiteURL", "privacyPolicyURL", "termsOfServiceURL", "supportURL",
+    "defaultPrompt", "composerIcon", "logo",
+}
 ENTRY_KEYS = {
     ".claude-plugin/marketplace.json": {"name", "source", "description", "category"},
     ".agents/plugins/marketplace.json": {"name", "source", "policy", "category"},
@@ -90,6 +106,11 @@ def relative_path_exists(owner, value):
         fail(f"{owner}: path {value!r} must be relative, inside the repo")
     elif not os.path.exists(value):
         fail(f"{owner}: names {value!r}, which does not exist")
+
+
+def is_file(owner, value):
+    if isinstance(value, str) and not os.path.isfile(value):
+        fail(f"{owner}: {value!r} is not a file")
 
 
 def check_package():
@@ -160,10 +181,12 @@ def check_package():
         if data[path].get("skills") != "./skills/":
             fail(f"{path}: skills does not name ./skills/")
 
-    # Hosts also find components by folder name, with no manifest key at all.
-    for found in ("commands", "agents", "hooks", "rules", "mcp.json", "SKILL.md"):
-        if os.path.exists(found):
-            fail(f"{found}: a host loads it on its own; the plugin is .mcp.json and one skill")
+    # The package is exactly its files, wherever a host might look.
+    tracked = set(git("ls-files").splitlines())
+    for path in sorted(tracked - FILES):
+        fail(f"{path}: not one of the plugin's files")
+    for path in sorted(FILES - tracked):
+        fail(f"{path}: one of the plugin's files is missing")
 
     # Every path a manifest names exists.
     for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
@@ -174,6 +197,12 @@ def check_package():
         for key in ("logo", "composerIcon"):
             if key in manifest.get("interface", {}):
                 relative_path_exists(path, manifest["interface"][key])
+                is_file(path, manifest["interface"][key])
+        if "logo" in manifest:
+            is_file(path, manifest["logo"])
+        extra = sorted(set(manifest.get("interface", {})) - INTERFACE_KEYS)
+        if extra:
+            fail(f"{path}: its interface carries {extra}, outside the plugin's fixed shape")
 
     # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
     # plugin's major says which N, as the GitHub Action's major does. A move

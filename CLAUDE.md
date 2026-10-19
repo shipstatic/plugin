@@ -88,9 +88,11 @@ sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
   in `plan-plugin.md` first); both marketplaces are named `shipstatic`, and
   Codex's policy is exactly `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
-  every path is a string inside the repo, and none of the folders hosts load
-  by name exists (`commands`, `agents`, `hooks`, `rules`, a root `mcp.json`
-  or `SKILL.md`);
+  every path is a string inside the repo, and a logo is a file;
+- the repo tracks exactly the plugin's files, listed in `validate.py`: hosts
+  load more than manifests name (a root `GEMINI.md`, a root `plugin.json`, a
+  `commands/` folder), and the file list is the one check that covers every
+  way in;
 - `skills/` holds exactly `publish-online`, named for its folder, and every
   mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
   major;

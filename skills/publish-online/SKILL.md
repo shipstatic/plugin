@@ -88,9 +88,11 @@ Then:
   served. Don't build a password page or script into the site. Make up a new
   password that is hard to guess, unless the user chose one. Never ask for a
   password the user already uses somewhere else.
-- If the CLI fails with `authentication_failed`, the key it is set up with was
-  refused. Tell the user, and that running `npx -y @shipstatic/ship@3 config`
-  with a new key from https://my.shipstatic.com/api-key fixes it.
+- If the CLI fails with `authentication_failed`, the key it used was refused.
+  Tell the user to replace it, with a new key from
+  https://my.shipstatic.com/api-key, where it is set: in `SHIP_TOKEN` if that
+  is set (it comes first), otherwise by running
+  `npx -y @shipstatic/ship@3 config`.
 - If publishing fails otherwise, tell the user what the message says. Fix what
   you can, for example a file type that isn't allowed, files that are too
   large, or a project folder where its build folder was meant, and publish
@@ -98,8 +100,9 @@ Then:
 
 ## Tell the user
 
-Both ways return the same fields. Read them; never decide from whether you
-are connected, or from which way you used.
+Both ways return the same fields for a published site. Read them; never
+decide from whether you are connected, or from which way you used. (A domain
+request returns the domain instead: report its `status` as it is.)
 
 The `claim` link says who owns the site, and `expires` says whether it
 expires.
@@ -113,10 +116,12 @@ expires.
   > https://my.shipstatic.com/claim/… and sign in.
 
 - **The result has no `claim` link:** the site is already in the user's
-  ShipStatic account. Give the link. If the result has `expires`, say when it
-  expires; if not, it stays until they delete it. The result doesn't say which
-  account, so don't guess.
-- The password, if you set one. A password the user never sees locks them out.
+  ShipStatic account. Give the link. If `expires` is not null, say when it
+  expires; if it is null, it stays until they delete it. The result doesn't
+  say which account, so don't guess.
+- **The result has `password: true`:** the site asks for a password before
+  showing anything. Say so, and give the password if you set one: a password
+  the user never sees locks them out.
 
 Keep the reply short. The links matter more than a summary of the files.
 

@@ -8,7 +8,7 @@ Ask your agent to put what you made online. It publishes a build folder straight
 
 ### Cursor
 
-From the Cursor Marketplace (the listing is in review):
+From the Cursor Marketplace (the listing isn't live yet):
 
 ```
 /add-plugin shipstatic
