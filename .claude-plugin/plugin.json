@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "shipstatic",
   "displayName": "ShipStatic",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
   "author": {
     "name": "ShipStatic",

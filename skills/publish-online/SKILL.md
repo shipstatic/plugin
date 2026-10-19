@@ -64,9 +64,9 @@ Choose the way:
 - **A shell with Node.js 20.19 or newer: the CLI.** It reads the files from
   disk, so nothing passes through the conversation.
 - **The CLI can't run** (no shell, no Node.js, or no network) **and the files
-  are few and small: the upload.** Send all the files of this version: text
-  files (HTML, CSS, JavaScript, JSON, SVG) as plain text, and binary files
-  such as images and fonts with `encoding: "base64"`.
+  are few and small: the upload.** Send text files (HTML, CSS, JavaScript,
+  JSON, SVG) as plain text, and binary files such as images and fonts with
+  `encoding: "base64"`.
 - **A large build the CLI can't send:** never read it into the conversation.
   Ask the user to let the CLI reach the network, or tell them what is missing:
   Node.js for the CLI, or the ShipStatic MCP server for the upload.
@@ -85,10 +85,11 @@ Then:
   served. Don't build a password page or script into the site. Make up a new
   password that is hard to guess, unless the user chose one. Never ask for a
   password the user already uses somewhere else.
-- If the CLI fails with `authentication_failed`, the key saved for it is old
-  or wrong. Publish with no account instead: run the CLI again with
-  `--config /dev/null` added, and tell the user their saved key was refused
-  and this site has a claim link.
+- If the CLI fails with `authentication_failed`, the key it holds is old or
+  wrong. Publish with no account instead: run the CLI again with `SHIP_TOKEN`
+  unset for that one command and `--config` pointing at a file you write
+  holding `{}`. Tell the user their saved key was refused and this site has a
+  claim link.
 - If publishing fails otherwise, tell the user what the message says. Fix what
   you can, for example a file type that isn't allowed, files that are too
   large, or a project folder where its build folder was meant, and publish

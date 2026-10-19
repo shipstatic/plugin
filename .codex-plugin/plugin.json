@@ -1,6 +1,6 @@
 {
   "name": "shipstatic",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
   "author": {
     "name": "ShipStatic",
@@ -31,8 +31,9 @@
     "developerName": "ShipStatic",
     "category": "Developer Tools",
     "capabilities": [
-      "Read",
-      "Write"
+      "Publish a site with no account",
+      "Get a link to share right away",
+      "Protect a site with a password"
     ],
     "websiteURL": "https://shipstatic.com",
     "privacyPolicyURL": "https://www.shipstatic.com/privacy",
@@ -43,6 +44,7 @@
       "Publish the dist folder with ShipStatic's built-in password protection."
     ],
     "composerIcon": "./assets/logo.png",
-    "logo": "./assets/logo.png"
+    "logo": "./assets/logo.png",
+    "supportURL": "https://www.shipstatic.com/support"
   }
 }

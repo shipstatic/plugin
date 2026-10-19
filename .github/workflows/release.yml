@@ -21,6 +21,11 @@ jobs:
       - name: Fetch every branch and tag, for the history check
         run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
+      - name: The tagged commit is on main
+        # A release is what main holds: a tag on an unmerged commit would
+        # publish a Release nobody merged.
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
       - name: The tagged commit validates, and the tag is every manifest's version
         run: python3 scripts/validate.py --tag "$GITHUB_REF_NAME"
 

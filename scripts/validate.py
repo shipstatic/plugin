@@ -120,6 +120,15 @@ def check_package():
         if data[path].get("mcpServers") != "./.mcp.json":
             fail(f"{path}: mcpServers does not name ./.mcp.json")
 
+    # The one server is .mcp.json's alone: no manifest declares a server,
+    # hooks, commands, agents or rules of its own beside it.
+    for path in (".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
+        extra = sorted({"hooks", "commands", "agents", "rules"} & set(data[path]))
+        if path == ".claude-plugin/plugin.json" and "mcpServers" in data[path]:
+            extra.append("mcpServers")
+        if extra:
+            fail(f"{path}: declares {extra}; the plugin is .mcp.json and one skill")
+
     # Every path a manifest names exists.
     for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
         manifest = data[path]
@@ -175,9 +184,10 @@ def git(*args):
 
 def check_history():
     """Every commit on every remote branch and tag names only ShipStatic."""
-    refs = [line for line in git("for-each-ref", "--format=%(refname)",
-                                 "refs/remotes/origin", "refs/tags").splitlines()
-            if not line.endswith("/HEAD")]
+    # HEAD too, so a pull request's own commits are read before they merge.
+    refs = ["HEAD"] + [line for line in git("for-each-ref", "--format=%(refname)",
+                                            "refs/remotes/origin", "refs/tags").splitlines()
+                       if not line.endswith("/HEAD")]
     if not refs:
         fail("history: no remote branches or tags were fetched to check")
         return
