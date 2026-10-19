@@ -38,7 +38,10 @@ connect the MCP server.
   `build/` or `out/`. Publish that folder.
 - **A project with a build step:** run its build, then publish the folder it
   writes.
-- **Nothing yet:** make the files, with the start page at `index.html`.
+- **Something new to make:** make the files in a new folder of its own, with
+  the start page at `index.html`. Never write them into an existing folder
+  such as `dist/` or the project's own files: that overwrites the user's work
+  and publishes files that don't belong to the new site.
 
 ## Make the files
 
