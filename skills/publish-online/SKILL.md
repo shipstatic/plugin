@@ -104,10 +104,11 @@ you are connected, or from which way you used.
   > It stays up for 3 days. To keep it, open
   > https://my.shipstatic.com/claim/… and sign in.
 
-- **The result has no `claim` link:** the site is in an account, and it stays
-  until the user deletes it. That is the account the MCP server is connected
-  to (for the upload), or the account the command is set up with (for the
-  command). The result doesn't name the account, so don't guess which one.
+- **The result has no `claim` link:** the site is already in the user's
+  ShipStatic account and stays until they delete it. Tell them just that,
+  with the link. It is the account the MCP server is connected to (for the
+  upload), or the account the command is set up with (for the command); the
+  result doesn't name it, so don't guess which.
 - The password, if you set one. A password the user never sees locks them out.
 
 Keep the reply short. The links matter more than a summary of the files.
