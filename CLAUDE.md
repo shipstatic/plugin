@@ -52,9 +52,12 @@ plugin's own major is that number: the plugin is 3.x while its skill runs
 `@4`. Minor and patch are the plugin's own, so a ship release forces no plugin
 release. `scripts/validate.py` holds the pin and the major equal.
 
-The skill's text is owned here. The ChatGPT listing (`integrations/gpt`) and
-`www.shipstatic.com/SKILL.md` carry copies, held byte-identical by the
-monorepo's checks once those copies exist (`plan-plugin.md` §9).
+The skill's text is owned here, and it is ShipStatic's one skill: the CLI
+package ships none of its own. www.shipstatic.com/SKILL.md serves it as one
+file, for any skills-aware tool: `web/www/SKILL.md` is its copy byte for byte,
+written by the monorepo's `node scripts/skill.mjs` and held equal by the
+super-repo's pre-commit hook whenever this pointer or www's is staged. A change
+to the skill is released here first, then carried to www.
 
 ## Which account a deploy lands in
 
