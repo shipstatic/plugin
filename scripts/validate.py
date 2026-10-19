@@ -184,8 +184,12 @@ def git(*args):
 
 def check_history():
     """Every commit on every remote branch and tag names only ShipStatic."""
-    # HEAD too, so a pull request's own commits are read before they merge.
-    refs = ["HEAD"] + [line for line in git("for-each-ref", "--format=%(refname)",
+    # The commit under check too, so a pull request's own commits are read
+    # before they merge. On a pull request that is the PR's head
+    # (HISTORY_HEAD, from validate.yml), never the checked-out HEAD: that is
+    # GitHub's merge commit, which GitHub authors.
+    head = os.environ.get("HISTORY_HEAD") or "HEAD"
+    refs = [head] + [line for line in git("for-each-ref", "--format=%(refname)",
                                             "refs/remotes/origin", "refs/tags").splitlines()
                        if not line.endswith("/HEAD")]
     if not refs:

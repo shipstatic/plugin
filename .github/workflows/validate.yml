@@ -26,6 +26,8 @@ jobs:
         run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
       - name: The manifests agree, the paths exist, the history names only ShipStatic
+        env:
+          HISTORY_HEAD: ${{ github.event.pull_request.head.sha }}
         run: python3 scripts/validate.py
 
       - uses: actions/setup-node@v7
