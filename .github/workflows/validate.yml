@@ -1,0 +1,56 @@
+name: Validate
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate gemini-extension.json is well-formed JSON
+        run: jq empty gemini-extension.json
+
+      - name: The extension runs the local MCP server, pinned to its major
+        # Majors pin majors: this manifest resolves @shipstatic/mcp at RUNTIME
+        # (npx), the same consumer class as the GitHub Action's CLI install
+        # line, so the pin freezes at the major for the life of this major.
+        run: |
+          test "$(jq -r '.mcpServers.shipstatic.command' gemini-extension.json)" = "npx"
+          jq -e '.mcpServers.shipstatic.args | index("@shipstatic/mcp@1")' gemini-extension.json
+
+      - name: The via restatement matches the vocabulary
+        # `gmn` restates DeploymentVia.GMN from @shipstatic/types. A manifest
+        # can import nothing, so the copy is fenced as a pinned literal: a
+        # respelling here would silently attribute every Gemini deploy as the
+        # generic `mcp` fallback (the readers drop unknown labels by design).
+        run: test "$(jq -r '.mcpServers.shipstatic.env.SHIP_VIA' gemini-extension.json)" = "gmn"
+
+      - name: The three plugin manifests state one version
+        run: |
+          G=$(jq -r .version gemini-extension.json)
+          C=$(jq -r .version .claude-plugin/plugin.json)
+          R=$(jq -r .version .cursor-plugin/plugin.json)
+          test "$G" = "$C" -a "$G" = "$R"
+
+      - name: Detect SKILL.md drift from canonical (npm/ship/SKILL.md)
+        # The canonical SKILL.md lives next to the @shipstatic/ship CLI it teaches.
+        # This plugin's copy must stay byte-identical — drift = stale instructions.
+        # Each branch is held to ship's branch of the same name (a pull request
+        # to its base), so a change made on development is checked against
+        # ship's development rather than waiting for main.
+        env:
+          BRANCH: ${{ github.base_ref || github.ref_name }}
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/shipstatic/ship/${BRANCH}/SKILL.md" \
+            -o /tmp/canonical-SKILL.md
+          if ! diff -q /tmp/canonical-SKILL.md skills/using-ship/SKILL.md; then
+            echo "::error title=SKILL drift detected::skills/using-ship/SKILL.md has drifted from https://github.com/shipstatic/ship/blob/${BRANCH}/SKILL.md. Sync with: cp ../../npm/ship/SKILL.md skills/using-ship/SKILL.md"
+            diff /tmp/canonical-SKILL.md skills/using-ship/SKILL.md || true
+            exit 1
+          fi
