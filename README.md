@@ -2,9 +2,9 @@
 
 Deploy static websites, landing pages, and prototypes instantly from your coding agent. Free, no account needed.
 
-Ask your agent to put what you made online. It publishes a build folder straight from disk, or a page it just wrote, and gives you a link you can share right away.
+## Try it in seconds, no account needed
 
-## Install
+Install the plugin in your coding agent:
 
 ### Cursor
 
@@ -46,7 +46,7 @@ npx skills add shipstatic/plugin
 
 After installing, start a new chat (in Cursor, reload the window first) so your agent sees it.
 
-## Use it
+### Then just ask
 
 Ask in your own words, for example:
 
@@ -54,16 +54,20 @@ Ask in your own words, for example:
 - "Make a one-page site for my bakery and give me a link I can share."
 - "Publish the dist folder with ShipStatic's built-in password protection."
 
+You get back a link you can share right away, and a claim link. The site stays up for 3 days, and opening the claim link keeps it for good.
+
+Want it private? Ask for ShipStatic's built-in password protection. Visitors have to type the password before they see anything, on the site's link and on any custom domain pointing at it.
+
 The plugin has one skill, `publish-online`, and one MCP server, `https://mcp.shipstatic.com`. Your agent picks how the files travel:
 
 - **A folder on disk** goes through the ShipStatic CLI, with `npx -y @shipstatic/ship@3`. It needs Node.js 20.19 or newer, and nothing to install.
 - **When the CLI can't run** (no Node.js, no network, or a host with no shell), a few small files go through the MCP server's `deployments_upload` tool instead.
 
-## No account needed
+## Keep your sites with a free account
 
-Publishing needs no account, whichever way the files travel. A site published without one stays up for 3 days, and you get a claim link with it. Open the claim link and sign in to keep the site.
+Everything above works with no account. A free account keeps your sites for good, lets you use your own domain, and shows you everything you've published in one place.
 
-If you want sites to go straight into your account, each way has its own setup:
+Each way your agent publishes has its own setup:
 
 | | With no account (the default) | Straight into your account |
 |---|---|---|
@@ -71,10 +75,6 @@ If you want sites to go straight into your account, each way has its own setup:
 | **Files, through the MCP server** | Live for 3 days, with a claim link | Sign in when your agent first uses an account tool. Cursor doesn't offer this sign-in yet, so in Cursor use the claim link |
 
 Signing in on one way doesn't set up the other. You can see and manage every site at [my.shipstatic.com](https://my.shipstatic.com).
-
-## Private sites
-
-Ask for ShipStatic's built-in password protection. Visitors have to type the password before they see anything, on the site's link and on any custom domain pointing at it.
 
 ## Also available
 
