@@ -275,8 +275,8 @@ def check_history():
         web = author == WEB_AUTHOR and committer == WEB_COMMITTER
         if not (ours or web):
             fail(f"history: {sha[:7]} is by {author}, committed by {committer}")
-        if re.search(r"^co-authored-by:", body, re.I | re.M):
-            fail(f"history: {sha[:7]} carries a Co-Authored-By trailer")
+        if re.search(r"^(co-authored-by|claude-session):|claude\.ai/code/session", body, re.I | re.M):
+            fail(f"history: {sha[:7]} carries an attribution line")
     print(f"history: {count} commits across {len(refs)} refs")
 
 

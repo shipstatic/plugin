@@ -102,7 +102,8 @@ sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
   mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
   major;
 - every commit on every remote branch and tag is ShipStatic's, with no
-  `Co-Authored-By` trailer. A commit made in GitHub's web interface passes
+  attribution line: no `Co-Authored-By` or `Claude-Session` trailer and no
+  link to an assistant's session. A commit made in GitHub's web interface passes
   with GitHub as its committer.
 
 `validate.yml` also runs `claude plugin validate` at an exact Claude Code
