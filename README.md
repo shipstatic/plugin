@@ -14,6 +14,8 @@ From the Cursor Marketplace (the listing isn't live yet):
 /add-plugin shipstatic
 ```
 
+Until then, add `https://mcp.shipstatic.com` as an MCP server in Cursor's settings, or install just the skill with `npx skills add shipstatic/plugin`.
+
 ### Claude Code
 
 ```
