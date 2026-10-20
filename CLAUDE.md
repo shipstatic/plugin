@@ -61,6 +61,21 @@ super-repo's pre-commit hook whenever this pointer, www's or gpt's is staged:
 ChatGPT listing's `integrations/gpt/skills/publish-online/SKILL.md`. A change
 to the skill is released here first, then carried to the copies.
 
+ClawHub (OpenClaw, and Hermes's Skills Hub, which reads it) serves the skill as
+`shipstatic`, a copy published by hand, because ClawHub has no trusted
+publishing for skills. After a release that changes the skill, publish the
+released bytes there, logged in as `shipstatic-com`, with the next version:
+
+```bash
+npx -y clawhub@0.23.3 skill publish <folder holding the released SKILL.md> --slug shipstatic \
+  --name ShipStatic --version <x.y.z> --source-repo shipstatic/plugin \
+  --source-commit <released sha> --source-ref main --source-path skills/publish-online
+```
+
+The monorepo's `node scripts/skill.mjs --check --registry` reads ClawHub's
+copy against this repo's `main`, so a release that skipped this step shows
+red there.
+
 ## Which account a deploy lands in
 
 Each way uses its own credential: the hosted upload uses the host's OAuth
