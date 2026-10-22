@@ -1,6 +1,6 @@
 {
   "name": "shipstatic",
-  "version": "3.1.6",
+  "version": "3.1.7",
   "description": "Deploy static websites, landing pages, and prototypes instantly from Gemini CLI. Free, no account needed.",
   "mcpServers": {
     "shipstatic": {
