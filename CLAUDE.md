@@ -5,8 +5,8 @@ coding agents**.
 
 ## What this repo is, and what it is not
 
-ShipStatic reaches AI hosts in two ways (the monorepo's
-`integrations/CLAUDE.md`, "Connectors and the plugin"):
+ShipStatic reaches AI hosts in two ways, and they never share a repo, a URL
+or a release:
 
 - **Connectors** are dedicated submissions to a chat app's directory, each a
   URL of its own: the ChatGPT listing (its own repo, `shipstatic/gpt`) and the
@@ -18,9 +18,7 @@ ShipStatic reaches AI hosts in two ways (the monorepo's
   door, and the URL it names is the plain `https://mcp.shipstatic.com`.
 
 The shape is AgentMail's (`agentmail-to/agentmail-plugins`): one `.mcp.json`
-with the hosted URL, shared skills, a thin native manifest per host. The
-design, its decisions and what was refused are the monorepo's
-`plan-plugin.md`.
+with the hosted URL, shared skills, a thin native manifest per host.
 
 ## Layout
 
@@ -54,17 +52,18 @@ release. `scripts/validate.py` holds the pin and the major equal.
 
 The skill's text is owned here, and it is ShipStatic's one skill: the CLI
 package ships none of its own. `npx skills add shipstatic/plugin` installs it
-from this repo for any skills-aware tool. Two places carry it byte for byte,
-both written by the monorepo's `node scripts/skill.mjs` and held equal by the
-super-repo's pre-commit hook whenever this pointer, www's or gpt's is staged:
-`web/www/SKILL.md`, served as one file at www.shipstatic.com/SKILL.md, and the
-ChatGPT listing's `integrations/gpt/skills/publish-online/SKILL.md`. A change
-to the skill is released here first, then carried to the copies.
+from this repo for any skills-aware tool. Two copies carry it byte for byte:
+the one file served at www.shipstatic.com/SKILL.md, and the ChatGPT listing's
+`skills/publish-online/SKILL.md` in `shipstatic/gpt`. A script outside this
+repo writes both and a check holds them equal, so they are never edited by
+hand. A change to the skill is released here first, then carried to the
+copies.
 
 ClawHub (OpenClaw, and Hermes's Skills Hub, which reads it) serves the skill as
 `shipstatic`, a copy published by hand, because ClawHub has no trusted
 publishing for skills. After a release that changes the skill, publish the
-released bytes there, logged in as `shipstatic-com`, with the next version:
+released bytes there, signed in to ShipStatic's ClawHub account, with the next
+version:
 
 ```bash
 npx -y clawhub@0.23.3 skill publish <folder holding the released SKILL.md> --slug shipstatic \
@@ -72,9 +71,8 @@ npx -y clawhub@0.23.3 skill publish <folder holding the released SKILL.md> --slu
   --source-commit <released sha> --source-ref main --source-path skills/publish-online
 ```
 
-The monorepo's `node scripts/skill.mjs --check --registry` reads ClawHub's
-copy against this repo's `main`, so a release that skipped this step shows
-red there.
+A check outside this repo reads ClawHub's copy against this repo's `main`, so
+a release that skipped this step shows red there.
 
 ## Which account a deploy lands in
 
@@ -87,8 +85,8 @@ for a folder.
 **Cursor cannot sign in mid-session on this URL.** Its client starts a
 sign-in after connect only for hosts it names, so in Cursor publishing works
 with no account and account tools answer Unauthorized. The skill's last
-sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
-`plan-plugin.md` §6 has the measurement and what would change it.
+sentence sends the user to `my.shipstatic.com` for that case. It changes when
+Cursor starts a sign-in after connect for this host.
 
 ## The checks
 
@@ -104,8 +102,8 @@ sentence sends the user to `my.shipstatic.com` for that case. The monorepo's
 - both marketplace entries are this repo's root, and Codex's sign-in is
   `ON_USE`: sign-in at install would end publishing with no account;
 - each manifest, and each marketplace entry, holds only the keys it holds
-  today (the package's shape is fixed, so a new key is a decision recorded
-  in `plan-plugin.md` first); both marketplaces are named `shipstatic`, and
+  today (the package's shape is fixed, so a new key is a design decision
+  first, never a passing edit); both marketplaces are named `shipstatic`, and
   Codex's policy is exactly `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
   every path is a string inside the repo, and a logo is a file;
@@ -126,9 +124,9 @@ version. It allows one warning: Claude Code does not load a plugin's root
 `CLAUDE.md`, and this file is the repo's guidance, not the plugin's.
 
 The checks that compare this repo with another (the skill's tool names
-against the MCP catalogue, the logo against the website's) live in the
-monorepo's `scripts/check-canon.sh`, so a release here never goes red because
-another repo moved.
+against the MCP catalogue, the logo against the website's) live in a
+check outside this repo, so a release here never goes red because another repo
+moved.
 
 **The `validate` job's name is the check `main`'s protection requires.**
 Renaming it leaves `main` unprotected.
@@ -149,11 +147,10 @@ a release that ran too early is repaired with "Re-run failed jobs". Released and
 separate states: Cursor reviews every update by hand, so a release reaches the
 Cursor Marketplace only once Cursor approves that commit.
 
-## History
+## Commit identity
 
-The repo's history began again on 2026-10-19 as one commit authored by
-ShipStatic: the earlier history named the wrong people. Every commit since is
-`ShipStatic <hello@shipstatic.com>`, unsigned, and the history check holds it.
+Every commit is `ShipStatic <hello@shipstatic.com>`, unsigned, and the history
+check in `validate.py` holds it.
 
 ## Gemini CLI facts worth keeping
 
