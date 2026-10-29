@@ -65,7 +65,7 @@ The plugin has one skill, `publish-online`, and one MCP server, `https://mcp.shi
 
 ## Keep your sites with a free account
 
-Everything above works with no account. A free account keeps your sites for good, lets you use your own domain, and shows you everything you've published in one place.
+Everything above works with no account. A free account keeps your sites for good, gives you a ShipStatic domain like `yourname.shipstatic.com`, and shows you everything you've published in one place. A custom domain like `www.example.com` needs a paid plan.
 
 Each way your agent publishes has its own setup:
 
