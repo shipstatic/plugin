@@ -32,7 +32,17 @@ with the hosted URL, shared skills, a thin native manifest per host.
 gemini-extension.json              # Gemini CLI: the same URL under its own key
 skills/publish-online/SKILL.md     # the one skill: putting things online
 scripts/validate.py                # the checks, for both workflows
+scripts/validate_test.py           # each check, drilled against its defect
+evals/                             # what the skill decides, run by hand
+.claude/CLAUDE.md                  # this guide
 ```
+
+The plugin folder is the repo root, so every tracked file ships to every
+installer and is scanned as the plugin. That is the price of one repo serving
+five hosts: Gemini CLI installs the root and finds `skills/` only there. So
+this guide lives in `.claude/`, where a contributor's Claude Code still loads
+it and no host reads it as the plugin's, and the evals and the validator's
+test are text a host never runs.
 
 The logo under assets is www's logo, byte for byte. This guide names it in
 prose only: the Claude directory holds a plugin for review when a guide,
@@ -177,19 +187,28 @@ Renaming it leaves `main` unprotected.
 
 ## Release
 
-Tag-driven and branch-agnostic. Merge `development` into `main`, let
-`validate` pass on that commit, then tag it:
+Tag-driven and branch-agnostic. **`main` moves only by a release**: the
+Claude directory scans each commit on `main` as a version, and every host
+installs `main`'s head, so a commit, a tag, a directory version and what
+every host installs are one thing. A docs-only change waits on `development`
+for the next version, or is itself a patch. Merge `development` into `main`,
+let `validate` pass on that commit, then tag it:
 
 ```bash
 git tag -a v3.1.0 -m "3.1.0" && git push origin v3.1.0
 ```
 
 `release.yml` refuses a tag that is not on `main` or whose commit has no
-successful run of `validate.yml`, checks the tag against every manifest's version,
-and creates the GitHub Release. Tag after `validate` has passed on `main`;
-a release that ran too early is repaired with "Re-run failed jobs". Released and listed are
-separate states: Cursor reviews every update by hand, so a release reaches the
-Cursor Marketplace only once Cursor approves that commit.
+successful run of `validate.yml`, checks the tag against every manifest's
+version, and creates the GitHub Release. Tag after `validate` has passed on
+`main`; a release that ran too early is repaired with "Re-run failed jobs".
+Released and listed are separate states: Cursor reviews every update by
+hand, so a release reaches the Cursor Marketplace only once Cursor approves
+that commit.
+
+A release is done when the Claude directory has scanned it: check the
+directory's scan of the release, since a scan can end with no result or hold
+the version for a reviewer, and nothing else in this ritual would show it.
 
 ## Commit identity
 
