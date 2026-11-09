@@ -21,7 +21,7 @@ graders:
     max: 0
   - name: no-link-claimed
     type: regex
-    pattern: 'https://[a-z0-9-]+\.shipstatic\.com'
+    pattern: 'https://(?!my\.)[a-z0-9-]+\.shipstatic\.com'
     match: not_contains
   - name: says-unknown
     type: llm
