@@ -76,6 +76,12 @@ Each way your agent publishes has its own setup:
 
 Signing in on one way doesn't set up the other. You can see and manage every site at [my.shipstatic.com](https://my.shipstatic.com).
 
+## What the plugin runs and sends
+
+- **It runs the ShipStatic CLI** with `npx -y @shipstatic/ship@3`, which downloads the CLI from npm.
+- **It sends the files you publish to ShipStatic,** through the CLI, which uses ShipStatic's API, or through the MCP server. Nothing else is sent anywhere.
+- **The claim link is yours alone.** Whoever opens it and signs in owns the site, so don't share it.
+
 ## Also available
 
 | Surface | Reach it |
