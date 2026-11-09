@@ -113,6 +113,9 @@ Cursor starts a sign-in after connect for this host.
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
   and every manifest that names the logo names the same path, inside the
   repo;
+- the Claude manifest's listing links (`supportUrl`, `privacyPolicyUrl`,
+  `termsOfServiceUrl`) equal the Codex `interface` copies, which spell them
+  `...URL`: the Claude directory reads its listing from that manifest;
 - the repo tracks exactly the plugin's files, each a regular file (git mode
   `100644`: no link, no submodule): the text files listed in `validate.py`,
   and the logo at the path the manifests name. Hosts load more than

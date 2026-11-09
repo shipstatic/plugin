@@ -4,12 +4,17 @@
   "displayName": "ShipStatic",
   "version": "3.1.7",
   "description": "Deploy static websites, landing pages, and prototypes instantly. Free, no account needed.",
+  "icon": "./assets/logo.png",
   "author": {
     "name": "ShipStatic",
     "email": "hello@shipstatic.com",
     "url": "https://shipstatic.com"
   },
   "homepage": "https://shipstatic.com",
+  "documentationUrl": "https://docs.shipstatic.com/plugin",
+  "supportUrl": "https://www.shipstatic.com/support",
+  "privacyPolicyUrl": "https://www.shipstatic.com/privacy",
+  "termsOfServiceUrl": "https://www.shipstatic.com/terms",
   "repository": "https://github.com/shipstatic/plugin",
   "license": "MIT",
   "keywords": [

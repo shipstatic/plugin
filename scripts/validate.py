@@ -59,8 +59,9 @@ S, SS, O, OS = "string", "strings", "object", "objects"
 # first and written here after.
 SHAPE = {
     ".claude-plugin/plugin.json": {
-        "$schema": S, "name": S, "displayName": S, "version": S, "description": S, "author": O,
-        "homepage": S, "repository": S, "license": S, "keywords": SS,
+        "$schema": S, "name": S, "displayName": S, "version": S, "description": S, "icon": S,
+        "author": O, "homepage": S, "documentationUrl": S, "supportUrl": S, "privacyPolicyUrl": S,
+        "termsOfServiceUrl": S, "repository": S, "license": S, "keywords": SS,
     },
     ".claude-plugin/marketplace.json": {"name": S, "owner": O, "description": S, "plugins": OS},
     ".codex-plugin/plugin.json": {
@@ -81,6 +82,11 @@ INTERFACE = {
     "category": S, "capabilities": SS, "websiteURL": S, "privacyPolicyURL": S,
     "termsOfServiceURL": S, "supportURL": S, "defaultPrompt": SS, "composerIcon": S, "logo": S,
 }
+# The Claude directory's listing reads its links from the Claude manifest,
+# and Codex's listing carries the same links under `interface`, spelled
+# `...URL` where Anthropic spells `...Url`. Each pair is one fact.
+LINKS = {"supportUrl": "supportURL", "privacyPolicyUrl": "privacyPolicyURL",
+         "termsOfServiceUrl": "termsOfServiceURL"}
 # The one entry each marketplace lists.
 ENTRY = {
     ".claude-plugin/marketplace.json": {"name": S, "source": S, "description": S, "category": S},
@@ -167,7 +173,7 @@ def check_package():
     if not all([shaped(*args) for args in inner]):
         return None
 
-    codex, cursor = data[".codex-plugin/plugin.json"], data[".cursor-plugin/plugin.json"]
+    claude, codex, cursor = (data[f".{host}-plugin/plugin.json"] for host in ("claude", "codex", "cursor"))
     claude_entry = data[".claude-plugin/marketplace.json"]["plugins"][0]
     codex_entry = data[".agents/plugins/marketplace.json"]["plugins"][0]
 
@@ -217,9 +223,15 @@ def check_package():
         if manifest["skills"] != "./skills/":
             fail(f"{path}: skills does not name ./skills/")
 
+    for claude_key, codex_key in LINKS.items():
+        if claude[claude_key] != codex["interface"][codex_key]:
+            fail(f".claude-plugin/plugin.json: {claude_key} is {claude[claude_key]!r}, but Codex's "
+                 f"interface.{codex_key} is {codex['interface'][codex_key]!r}")
+
     # The logo, wherever a manifest names it. Its path is read here and never
     # opened: git's index below proves it is a tracked regular file.
     named = {
+        ".claude-plugin/plugin.json: icon": claude["icon"],
         ".cursor-plugin/plugin.json: logo": cursor["logo"],
         ".codex-plugin/plugin.json: interface.logo": codex["interface"]["logo"],
         ".codex-plugin/plugin.json: interface.composerIcon": codex["interface"]["composerIcon"],
