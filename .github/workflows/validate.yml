@@ -37,18 +37,21 @@ jobs:
         with:
           node-version: 22
 
-      - name: Claude Code reads the plugin and its marketplace
+      - name: Claude Code reads the plugin as the Claude directory does
         # Exact-pinned: the validator carries Claude Code's contract, and a
         # floating pin would change what this check means between two runs.
-        # One warning is expected and allowed: Claude Code does not load a
-        # plugin's root CLAUDE.md, which is this repo's own guidance, never
-        # the plugin's.
+        # The directory profile fails on anything the directory would refuse
+        # among the checks this validator runs, and on a check it could not
+        # make; --strict fails on any warning, and none is allowed. The
+        # directory runs more checks, such as its policy stage, so a green
+        # run here is not the directory's verdict. Its findings are printed
+        # either way, so a hold or a note shows in the log.
         run: |
-          npm install --global --no-fund --no-audit @anthropic-ai/claude-code@2.1.303
-          claude plugin validate . --json > report.json || { cat report.json; exit 1; }
-          jq -e '.success' report.json > /dev/null || { cat report.json; exit 1; }
-          unexpected=$(jq '[.manifest.warnings[], (.contents[].warnings[] | select(.message | startswith("CLAUDE.md at the plugin root") | not))] | length' report.json)
-          [ "$unexpected" -eq 0 ] || { cat report.json; exit 1; }
+          npm install --global --no-fund --no-audit @anthropic-ai/claude-code@2.1.319
+          code=0
+          claude plugin validate . --strict --profile directory --json > report.json || code=$?
+          jq '.directory.findings' report.json
+          [ "$code" -eq 0 ] || { cat report.json; exit 1; }
 
   notify:
     needs: [validate]

@@ -138,9 +138,11 @@ logo's path, a bad version, a wrong type, a key added or dropped) and
 requires `validate.py` to fail naming it, after the untouched copy passes. A
 new check comes with its case.
 
-`validate.yml` also runs `claude plugin validate` at an exact Claude Code
-version. It allows one warning: Claude Code does not load a plugin's root
-`CLAUDE.md`, and this file is the repo's guidance, not the plugin's.
+`validate.yml` also runs `claude plugin validate --strict --profile
+directory` at an exact Claude Code version: it fails on anything the Claude
+directory would refuse among the checks it runs, and on any warning, with
+none allowed. It prints the directory's findings, so a hold shows in the
+log. The directory runs more checks, so a green run is not its verdict.
 
 The checks that compare this repo with another (the skill's tool names
 against the MCP catalogue, the logo against the website's) live in a
