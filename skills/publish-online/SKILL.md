@@ -45,7 +45,10 @@ something, often with your help, and they want a link they can share.
 
 - **A project with a build step:** run its build, and once it succeeds,
   publish the folder it writes. Build first even when an older build folder is
-  already there.
+  already there. If the build can't run or fails, don't write what it would
+  make by hand, and don't publish the older folder: say the site isn't online
+  yet and why, and give the user one step, such as running the build
+  themselves.
 - **A built site with nothing to build:** a folder with an `index.html` at the
   top, such as `dist/`, `build/` or `out/`. Publish that folder. If the user
   names a folder, publish that one as it is.
