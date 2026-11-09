@@ -82,11 +82,32 @@ INTERFACE = {
     "category": S, "capabilities": SS, "websiteURL": S, "privacyPolicyURL": S,
     "termsOfServiceURL": S, "supportURL": S, "defaultPrompt": SS, "composerIcon": S, "logo": S,
 }
-# The Claude directory's listing reads its links from the Claude manifest,
-# and Codex's listing carries the same links under `interface`, spelled
-# `...URL` where Anthropic spells `...Url`. Each pair is one fact.
-LINKS = {"supportUrl": "supportURL", "privacyPolicyUrl": "privacyPolicyURL",
-         "termsOfServiceUrl": "termsOfServiceURL"}
+# A fact the host manifests restate is one fact. Each row names the places
+# that hold it, as a file and a dotted path into it, and the places must
+# agree. The Claude directory reads its listing's links from the Claude
+# manifest and Codex's listing carries the same links under `interface`,
+# spelled `...URL` where Anthropic spells `...Url`. Gemini's description is
+# its own, for Gemini's gallery, so it is no row.
+CLAUDE, CODEX, CURSOR = ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"
+CLAUDE_MARKET, CODEX_MARKET = ".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"
+SHARED = {
+    "description": [(CLAUDE, "description"), (CODEX, "description"), (CURSOR, "description"),
+                    (CLAUDE_MARKET, "plugins.0.description")],
+    "display name": [(CLAUDE, "displayName"), (CODEX, "interface.displayName"),
+                     (CODEX_MARKET, "interface.displayName")],
+    "homepage": [(CLAUDE, "homepage"), (CODEX, "homepage"), (CURSOR, "homepage"),
+                 (CODEX, "interface.websiteURL")],
+    "repository": [(CLAUDE, "repository"), (CODEX, "repository"), (CURSOR, "repository")],
+    "license": [(CLAUDE, "license"), (CODEX, "license"), (CURSOR, "license")],
+    "keywords": [(CLAUDE, "keywords"), (CODEX, "keywords"), (CURSOR, "keywords")],
+    "author name": [(CLAUDE, "author.name"), (CODEX, "author.name"), (CURSOR, "author.name"),
+                    (CLAUDE_MARKET, "owner.name"), (CODEX, "interface.developerName")],
+    "author email": [(CLAUDE, "author.email"), (CODEX, "author.email"), (CURSOR, "author.email"),
+                     (CLAUDE_MARKET, "owner.email")],
+    "support link": [(CLAUDE, "supportUrl"), (CODEX, "interface.supportURL")],
+    "privacy link": [(CLAUDE, "privacyPolicyUrl"), (CODEX, "interface.privacyPolicyURL")],
+    "terms link": [(CLAUDE, "termsOfServiceUrl"), (CODEX, "interface.termsOfServiceURL")],
+}
 # The one entry each marketplace lists.
 ENTRY = {
     ".claude-plugin/marketplace.json": {"name": S, "source": S, "description": S, "category": S},
@@ -146,6 +167,13 @@ def shaped(owner, value, shape):
         if key in value and not TYPES[kind](value[key]):
             fail(f"{owner}: {key} is {value[key]!r}, not {kind}")
     return len(failures) == before
+
+
+def pick(value, dotted):
+    """The value at a dotted path, through objects and lists."""
+    for part in dotted.split("."):
+        value = value[int(part)] if isinstance(value, list) else value[part]
+    return value
 
 
 def inside(owner, value):
@@ -227,10 +255,10 @@ def check_package():
         if manifest["skills"] != "./skills/":
             fail(f"{path}: skills does not name ./skills/")
 
-    for claude_key, codex_key in LINKS.items():
-        if claude[claude_key] != codex["interface"][codex_key]:
-            fail(f".claude-plugin/plugin.json: {claude_key} is {claude[claude_key]!r}, but Codex's "
-                 f"interface.{codex_key} is {codex['interface'][codex_key]!r}")
+    for fact, places in SHARED.items():
+        values = {f"{path}: {dotted}": pick(data[path], dotted) for path, dotted in places}
+        if len({json.dumps(v, sort_keys=True) for v in values.values()}) != 1:
+            fail(f"the {fact} differs between manifests: {values}")
 
     # The logo, wherever a manifest names it. Its path is read here and never
     # opened: git's index below proves it is a tracked regular file.
@@ -267,39 +295,38 @@ def check_package():
     for path in sorted(FILES - set(modes)):
         fail(f"{path}: one of the plugin's files is missing")
 
-    # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
-    # plugin's major says which N, as the GitHub Action's major does. A move
-    # to the next CLI major is the plugin's next major, never a silent one.
-    # Every mention of the package must be exactly `@N`: no `@latest`, no
-    # exact version, no bare name.
-    with open("skills/publish-online/SKILL.md", encoding="utf-8") as f:
-        specs = re.findall(r"@shipstatic/ship(@[^\s`]*)?", f.read())
-    majors = {v.split(".")[0] for v in versions.values()}
-    want = f"@{majors.pop()}" if len(majors) == 1 else None
-    if not specs:
-        fail("skills/publish-online/SKILL.md: never names @shipstatic/ship")
-    for spec in specs:
-        if spec != want:
-            fail(f"skills/publish-online/SKILL.md: runs @shipstatic/ship{spec}, not @shipstatic/ship{want}")
-
     # One skill, by decision. A next one, such as a custom domain, is a
     # design decision first, then a line here.
     folders = sorted(os.listdir("skills"))
     if folders != ["publish-online"]:
         fail(f"skills/ holds {folders}, not the one skill ['publish-online']")
 
-    # Each skill is named for its folder.
+    # Each skill is named for its folder, and runs the CLI at the plugin's
+    # major: the skill runs `@shipstatic/ship@N`, and the plugin's major says
+    # which N, as the GitHub Action's major does, so a move to the next CLI
+    # major is the plugin's next major, never a silent one. Every mention of
+    # the package must be exactly `@N`: no `@latest`, no exact version, no
+    # bare name.
+    majors = {v.split(".")[0] for v in versions.values()}
+    want = f"@{majors.pop()}" if len(majors) == 1 else None
     for folder in folders:
         skill = os.path.join("skills", folder, "SKILL.md")
         if not os.path.isfile(skill):
             fail(f"skills/{folder}: has no SKILL.md")
             continue
         with open(skill, encoding="utf-8") as f:
-            match = re.match(r"---\nname: (\S+)\ndescription: .+\n---\n", f.read())
+            text = f.read()
+        match = re.match(r"---\nname: (\S+)\ndescription: .+\n---\n", text)
         if not match:
             fail(f"{skill}: frontmatter is not 'name' then 'description'")
         elif match.group(1) != folder:
             fail(f"{skill}: is named {match.group(1)!r}, its folder {folder!r}")
+        specs = re.findall(r"@shipstatic/ship(@[^\s`]*)?", text)
+        if not specs:
+            fail(f"{skill}: never names @shipstatic/ship")
+        for spec in specs:
+            if spec != want:
+                fail(f"{skill}: runs @shipstatic/ship{spec}, not @shipstatic/ship{want}")
 
     return versions
 
