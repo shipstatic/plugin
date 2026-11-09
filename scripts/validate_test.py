@@ -122,7 +122,7 @@ CASES = [
      "skills does not name ./skills/"),
     ("a logo outside the repo", lambda tree: edit(CURSOR, lambda d: d.update(logo="../logo")),
      "must be relative, inside the repo"),
-    ("two logos", lambda tree: edit(CURSOR, lambda d: d.update(logo="./assets/other.png")), "more than one logo"),
+    ("two logos", lambda tree: edit(CURSOR, lambda d: d.update(logo="./other-logo")), "more than one logo"),
     ("a logo path that is a folder", logo_names_a_directory, "which is not a tracked file"),
     # One fact, restated.
     ("a listing link that differs from Codex's",
