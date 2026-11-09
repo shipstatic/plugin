@@ -43,44 +43,69 @@ VERSIONED = [
     "gemini-extension.json",
 ]
 
-# The package's shape is fixed, so each manifest may hold only the keys it
-# holds today. A key outside this list (a second server, hooks, an app, a
-# context file) is a change to the plugin's shape, decided in plan-plugin.md
-# first and added here after.
-KEYS = {
-    ".claude-plugin/plugin.json": {"$schema", "name", "displayName", "version", "description",
-                                   "author", "homepage", "repository", "license", "keywords"},
-    ".claude-plugin/marketplace.json": {"name", "owner", "description", "plugins"},
-    ".codex-plugin/plugin.json": {"name", "version", "description", "author", "homepage",
-                                  "repository", "license", "keywords", "skills", "mcpServers",
-                                  "interface"},
-    ".agents/plugins/marketplace.json": {"name", "interface", "plugins"},
-    ".cursor-plugin/plugin.json": {"name", "version", "description", "author", "homepage",
-                                   "repository", "license", "keywords", "logo", "skills",
-                                   "mcpServers"},
-    "gemini-extension.json": {"name", "version", "description", "mcpServers"},
-    ".mcp.json": {"mcpServers"},
+# What a value may be. A host reads these files with its own parser, so a
+# string where a list belongs is a broken listing that no JSON check sees.
+TYPES = {
+    "string": lambda v: isinstance(v, str),
+    "strings": lambda v: isinstance(v, list) and all(isinstance(x, str) for x in v),
+    "object": lambda v: isinstance(v, dict),
+    "objects": lambda v: isinstance(v, list) and all(isinstance(x, dict) for x in v),
 }
-# The package is exactly these files. Hosts load more than manifests name
-# (Gemini a root GEMINI.md, Cursor and Codex a root plugin.json, Claude Code
-# a commands/ folder), so the list of files is the one check that covers
-# every way in at once. A new file is a decision recorded first.
+S, SS, O, OS = "string", "strings", "object", "objects"
+
+# The package's shape is fixed: each manifest holds exactly these keys, each
+# of its type. A key added (a second server, hooks, an app, a context file)
+# or dropped is a change to the plugin's shape, decided in plan-plugin.md
+# first and written here after.
+SHAPE = {
+    ".claude-plugin/plugin.json": {
+        "$schema": S, "name": S, "displayName": S, "version": S, "description": S, "author": O,
+        "homepage": S, "repository": S, "license": S, "keywords": SS,
+    },
+    ".claude-plugin/marketplace.json": {"name": S, "owner": O, "description": S, "plugins": OS},
+    ".codex-plugin/plugin.json": {
+        "name": S, "version": S, "description": S, "author": O, "homepage": S, "repository": S,
+        "license": S, "keywords": SS, "skills": S, "mcpServers": S, "interface": O,
+    },
+    ".agents/plugins/marketplace.json": {"name": S, "interface": O, "plugins": OS},
+    ".cursor-plugin/plugin.json": {
+        "name": S, "version": S, "description": S, "author": O, "homepage": S, "repository": S,
+        "license": S, "keywords": SS, "logo": S, "skills": S, "mcpServers": S,
+    },
+    "gemini-extension.json": {"name": S, "version": S, "description": S, "mcpServers": O},
+    ".mcp.json": {"mcpServers": O},
+}
+# Codex's listing, under its manifest's `interface`.
+INTERFACE = {
+    "displayName": S, "shortDescription": S, "longDescription": S, "developerName": S,
+    "category": S, "capabilities": SS, "websiteURL": S, "privacyPolicyURL": S,
+    "termsOfServiceURL": S, "supportURL": S, "defaultPrompt": SS, "composerIcon": S, "logo": S,
+}
+# The one entry each marketplace lists.
+ENTRY = {
+    ".claude-plugin/marketplace.json": {"name": S, "source": S, "description": S, "category": S},
+    ".agents/plugins/marketplace.json": {"name": S, "source": O, "policy": O, "category": S},
+}
+# The text files of the package. Hosts load more than manifests name (Gemini
+# a root GEMINI.md, Cursor and Codex a root plugin.json, Claude Code a
+# commands/ folder), so the list of files is the one check that covers every
+# way in at once. A new file is a decision recorded first.
+#
+# The logo is the package's one image, and it is not listed: the Claude
+# directory holds a plugin for review when a script writes a bundled image's
+# path. The manifests name it, and this script reads the path from them.
 FILES = {
     ".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json",
     ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json",
     ".claude/CLAUDE.md", ".github/workflows/release.yml", ".github/workflows/validate.yml",
-    ".mcp.json", "AGENTS.md", "LICENSE", "README.md", "assets/logo.png",
-    "gemini-extension.json", "scripts/validate.py", "skills/publish-online/SKILL.md",
+    ".mcp.json", "AGENTS.md", "LICENSE", "README.md", "gemini-extension.json",
+    "scripts/validate.py", "scripts/validate_test.py", "skills/publish-online/SKILL.md",
 }
-INTERFACE_KEYS = {
-    "displayName", "shortDescription", "longDescription", "developerName", "category",
-    "capabilities", "websiteURL", "privacyPolicyURL", "termsOfServiceURL", "supportURL",
-    "defaultPrompt", "composerIcon", "logo",
-}
-ENTRY_KEYS = {
-    ".claude-plugin/marketplace.json": {"name", "source", "description", "category"},
-    ".agents/plugins/marketplace.json": {"name", "source", "policy", "category"},
-}
+# Git's mode for a regular file. The directory refuses links and submodules,
+# and a link would let a manifest's path reach outside the repo.
+REGULAR = "100644"
+# MAJOR.MINOR.PATCH, as Cursor documents `version`, with no leading zeros.
+SEMVER = re.compile(r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)")
 
 failures = []
 
@@ -98,111 +123,130 @@ def load(path):
         return None
 
 
-def relative_path_exists(owner, value):
-    if not isinstance(value, str):
-        fail(f"{owner}: path {value!r} is not a string")
-        return
-    if value.startswith("/") or ".." in value.split("/"):
+def shaped(owner, value, shape):
+    """True when `value` holds exactly the keys of `shape`, each of its type."""
+    before = len(failures)
+    extra = sorted(set(value) - set(shape))
+    missing = sorted(set(shape) - set(value))
+    if extra:
+        fail(f"{owner}: carries {extra}, outside the plugin's fixed shape")
+    if missing:
+        fail(f"{owner}: lacks {missing}, which the plugin's fixed shape holds")
+    for key, kind in shape.items():
+        if key in value and not TYPES[kind](value[key]):
+            fail(f"{owner}: {key} is {value[key]!r}, not {kind}")
+    return len(failures) == before
+
+
+def inside(owner, value):
+    """A path a manifest names, relative and inside the repo, as git lists it."""
+    parts = value.split("/")
+    if value.startswith("/") or ".." in parts:
         fail(f"{owner}: path {value!r} must be relative, inside the repo")
-    elif not os.path.exists(value):
-        fail(f"{owner}: names {value!r}, which does not exist")
-
-
-def is_file(owner, value):
-    if isinstance(value, str) and not os.path.isfile(value):
-        fail(f"{owner}: {value!r} is not a file")
+        return None
+    return "/".join(part for part in parts if part not in ("", "."))
 
 
 def check_package():
     data = {path: load(path) for path in MANIFESTS}
     if any(value is None for value in data.values()):
-        return
+        return None
 
-    for path, allowed in KEYS.items():
-        extra = sorted(set(data[path]) - allowed)
-        if extra:
-            fail(f"{path}: carries {extra}, outside the plugin's fixed shape")
-    for path, allowed in ENTRY_KEYS.items():
-        for entry in data[path].get("plugins", []):
-            extra = sorted(set(entry) - allowed)
-            if extra:
-                fail(f"{path}: its entry carries {extra}, outside the plugin's fixed shape")
-
-    # One name.
-    names = {
-        ".claude-plugin/plugin.json": data[".claude-plugin/plugin.json"]["name"],
-        ".codex-plugin/plugin.json": data[".codex-plugin/plugin.json"]["name"],
-        ".cursor-plugin/plugin.json": data[".cursor-plugin/plugin.json"]["name"],
-        "gemini-extension.json": data["gemini-extension.json"]["name"],
-    }
-    for market in (".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
-        if data[market].get("name") != NAME:
-            fail(f"{market}: the marketplace is named {data[market].get('name')!r}, not {NAME!r}")
-        entries = data[market].get("plugins", [])
+    # Every check below reads the shape, so a manifest out of shape stops
+    # here, with what is wrong.
+    if not all([shaped(path, data[path], SHAPE[path]) for path in MANIFESTS]):
+        return None
+    inner = [(".codex-plugin/plugin.json: its interface",
+              data[".codex-plugin/plugin.json"]["interface"], INTERFACE)]
+    for market, shape in ENTRY.items():
+        entries = data[market]["plugins"]
         if len(entries) != 1:
             fail(f"{market}: lists {len(entries)} plugins, not one")
-            continue
-        names[market] = entries[0].get("name")
+            return None
+        inner.append((f"{market}: its entry", entries[0], shape))
+    if not all([shaped(*args) for args in inner]):
+        return None
+
+    codex, cursor = data[".codex-plugin/plugin.json"], data[".cursor-plugin/plugin.json"]
+    claude_entry = data[".claude-plugin/marketplace.json"]["plugins"][0]
+    codex_entry = data[".agents/plugins/marketplace.json"]["plugins"][0]
+
+    # One name.
+    names = {path: data[path]["name"] for path in VERSIONED}
+    names[".claude-plugin/marketplace.json: its entry"] = claude_entry["name"]
+    names[".agents/plugins/marketplace.json: its entry"] = codex_entry["name"]
+    for market in (".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
+        names[f"{market}: the marketplace"] = data[market]["name"]
     for path, name in names.items():
         if name != NAME:
             fail(f"{path}: name is {name!r}, not {NAME!r}")
 
     # Every marketplace entry is this repo's root.
-    if data[".claude-plugin/marketplace.json"]["plugins"][0].get("source") != "./":
+    if claude_entry["source"] != "./":
         fail(".claude-plugin/marketplace.json: source is not the repo root './'")
-    codex_entry = data[".agents/plugins/marketplace.json"]["plugins"][0]
-    if codex_entry.get("source") != {"source": "local", "path": "./"}:
+    if codex_entry["source"] != {"source": "local", "path": "./"}:
         fail(".agents/plugins/marketplace.json: source is not the repo root")
     # Sign-in comes at first use: an account at install would end publishing
     # with no account (plan-plugin.md §2).
-    if codex_entry.get("policy") != {"installation": "AVAILABLE", "authentication": "ON_USE"}:
+    if codex_entry["policy"] != {"installation": "AVAILABLE", "authentication": "ON_USE"}:
         fail(".agents/plugins/marketplace.json: policy must be installation AVAILABLE, authentication ON_USE")
 
-    # One version.
-    versions = {path: data[path].get("version") for path in VERSIONED}
+    # One version, and a semantic one.
+    versions = {path: data[path]["version"] for path in VERSIONED}
     if len(set(versions.values())) != 1:
         fail(f"the manifests state more than one version: {versions}")
+    for path, version in versions.items():
+        if not SEMVER.fullmatch(version):
+            fail(f"{path}: version {version!r} is not MAJOR.MINOR.PATCH")
 
     # Exactly one server, the plain production URL, stated twice: once in
     # .mcp.json and once under Gemini's own key.
-    servers = data[".mcp.json"].get("mcpServers", {})
+    servers = data[".mcp.json"]["mcpServers"]
     if list(servers) != [NAME]:
         fail(f".mcp.json: servers are {list(servers)}, not exactly [{NAME!r}]")
     elif servers[NAME] != {"type": "http", "url": URL}:
         fail(f".mcp.json: the server is {servers[NAME]}, not the plain URL {URL}")
-    gemini = data["gemini-extension.json"].get("mcpServers", {})
+    gemini = data["gemini-extension.json"]["mcpServers"]
     if gemini != {NAME: {"httpUrl": URL}}:
         fail(f"gemini-extension.json: mcpServers is {gemini}, not one server at {URL}")
     # The shape is fixed, so the paths are checked as values, not as files
     # that happen to exist.
-    for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
-        if data[path].get("mcpServers") != "./.mcp.json":
+    for path, manifest in ((".codex-plugin/plugin.json", codex), (".cursor-plugin/plugin.json", cursor)):
+        if manifest["mcpServers"] != "./.mcp.json":
             fail(f"{path}: mcpServers does not name ./.mcp.json")
-        if data[path].get("skills") != "./skills/":
+        if manifest["skills"] != "./skills/":
             fail(f"{path}: skills does not name ./skills/")
 
-    # The package is exactly its files, wherever a host might look.
-    tracked = set(git("ls-files").splitlines())
-    for path in sorted(tracked - FILES):
-        fail(f"{path}: not one of the plugin's files")
-    for path in sorted(FILES - tracked):
-        fail(f"{path}: one of the plugin's files is missing")
+    # The logo, wherever a manifest names it. Its path is read here and never
+    # opened: git's index below proves it is a tracked regular file.
+    named = {
+        ".cursor-plugin/plugin.json: logo": cursor["logo"],
+        ".codex-plugin/plugin.json: interface.logo": codex["interface"]["logo"],
+        ".codex-plugin/plugin.json: interface.composerIcon": codex["interface"]["composerIcon"],
+    }
+    images = {owner: inside(owner, value) for owner, value in named.items()}
+    if None in images.values():
+        return None
+    if len(set(images.values())) != 1:
+        fail(f"the manifests name more than one logo: {named}")
 
-    # Every path a manifest names exists.
-    for path in (".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
-        manifest = data[path]
-        for key in ("skills", "mcpServers", "logo"):
-            if key in manifest:
-                relative_path_exists(path, manifest[key])
-        for key in ("logo", "composerIcon"):
-            if key in manifest.get("interface", {}):
-                relative_path_exists(path, manifest["interface"][key])
-                is_file(path, manifest["interface"][key])
-        if "logo" in manifest:
-            is_file(path, manifest["logo"])
-        extra = sorted(set(manifest.get("interface", {})) - INTERFACE_KEYS)
-        if extra:
-            fail(f"{path}: its interface carries {extra}, outside the plugin's fixed shape")
+    # The package is exactly its files, each a regular file, wherever a host
+    # might look.
+    modes = {}
+    for line in git("ls-files", "-s").splitlines():
+        meta, path = line.split("\t", 1)
+        modes[path] = meta.split()[0]
+    for path, mode in sorted(modes.items()):
+        if mode != REGULAR:
+            fail(f"{path}: git mode {mode}, not a regular file ({REGULAR})")
+    for owner, image in images.items():
+        if image not in modes:
+            fail(f"{owner}: names {image!r}, which is not a tracked file")
+    package = FILES | set(images.values())
+    for path in sorted(set(modes) - package):
+        fail(f"{path}: not one of the plugin's files")
+    for path in sorted(FILES - set(modes)):
+        fail(f"{path}: one of the plugin's files is missing")
 
     # The major is the CLI's: the skill runs `@shipstatic/ship@N`, and the
     # plugin's major says which N, as the GitHub Action's major does. A move
@@ -211,7 +255,7 @@ def check_package():
     # exact version, no bare name.
     with open("skills/publish-online/SKILL.md", encoding="utf-8") as f:
         specs = re.findall(r"@shipstatic/ship(@[^\s`]*)?", f.read())
-    majors = {str(v).split(".")[0] for v in versions.values()}
+    majors = {v.split(".")[0] for v in versions.values()}
     want = f"@{majors.pop()}" if len(majors) == 1 else None
     if not specs:
         fail("skills/publish-online/SKILL.md: never names @shipstatic/ship")

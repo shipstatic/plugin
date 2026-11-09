@@ -30,6 +30,9 @@ jobs:
           HISTORY_HEAD: ${{ github.event.pull_request.head.sha }}
         run: python3 scripts/validate.py
 
+      - name: Each of those checks refuses the defect it names
+        run: python3 scripts/validate_test.py
+
       - uses: actions/setup-node@v7
         with:
           node-version: 22

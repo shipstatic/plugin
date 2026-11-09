@@ -97,24 +97,29 @@ Cursor starts a sign-in after connect for this host.
 `scripts/validate.py`, run by `validate.yml` on both branches and by
 `release.yml` on the tagged commit:
 
-- every manifest is readable JSON, and every path it names exists inside
-  the repo;
+- every manifest is readable JSON;
 - one name, `shipstatic`, everywhere, and one version across the four
-  versioned manifests (and, on a release, equal to the tag);
+  versioned manifests, written MAJOR.MINOR.PATCH (and, on a release, equal
+  to the tag);
 - exactly one server, the plain production URL, in `.mcp.json` and again
   under Gemini's `httpUrl`;
 - both marketplace entries are this repo's root, and Codex's sign-in is
   `ON_USE`: sign-in at install would end publishing with no account;
-- each manifest, and each marketplace entry, holds only the keys it holds
-  today (the package's shape is fixed, so a new key is a design decision
+- each manifest, and each marketplace entry, holds exactly the keys it holds
+  today, each of its type: a string, a list of strings, an object (the
+  package's shape is fixed, so a key added or dropped is a design decision
   first, never a passing edit); both marketplaces are named `shipstatic`, and
   Codex's policy is exactly `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
-  every path is a string inside the repo, and a logo is a file;
-- the repo tracks exactly the plugin's files, listed in `validate.py`: hosts
-  load more than manifests name (a root `GEMINI.md`, a root `plugin.json`, a
-  `commands/` folder), and the file list is the one check that covers every
-  way in;
+  and every manifest that names the logo names the same path, inside the
+  repo;
+- the repo tracks exactly the plugin's files, each a regular file (git mode
+  `100644`: no link, no submodule): the text files listed in `validate.py`,
+  and the logo at the path the manifests name. Hosts load more than
+  manifests name (a root `GEMINI.md`, a root `plugin.json`, a `commands/`
+  folder), and the file list is the one check that covers every way in. The
+  script reads the logo's path from the manifests and never opens the image:
+  git's index proves it is a tracked regular file;
 - `skills/` holds exactly `publish-online`, named for its folder, and every
   mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
   major;
@@ -122,6 +127,13 @@ Cursor starts a sign-in after connect for this host.
   attribution line: no `Co-Authored-By` or `Claude-Session` trailer and no
   link to an assistant's session. A commit made in GitHub's web interface passes
   with GitHub as its committer.
+
+`scripts/validate_test.py`, which `validate.yml` runs next, drills those
+checks: in a fresh copy of the package it plants one defect at a time (a
+link, an executable file, a missing or an extra file, a directory at the
+logo's path, a bad version, a wrong type, a key added or dropped) and
+requires `validate.py` to fail naming it, after the untouched copy passes. A
+new check comes with its case.
 
 `validate.yml` also runs `claude plugin validate` at an exact Claude Code
 version. It allows one warning: Claude Code does not load a plugin's root
