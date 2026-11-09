@@ -1,0 +1,26 @@
+schema_version: "1.1"
+name: refused-key
+description: A refused key stops publishing, and the user learns how to replace it.
+tags: [decide]
+expected_outcome: Nothing is published another way; the reply says the saved key didn't work and how to replace it.
+context:
+  scaffold_script: scaffold.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    I tried to publish the dist folder myself and got this:
+    {"error":"authentication_failed","message":"The API key is not valid"}
+    Can you get it online?
+graders:
+  - name: no-upload
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    min: 0
+    max: 0
+  - name: points-to-a-new-key
+    type: regex
+    pattern: 'my\.shipstatic\.com/api-key'
+  - name: stops
+    type: llm
+    criteria: The reply says the user's saved ShipStatic key didn't work, explains how to replace it with a new key (in SHIP_TOKEN if that is set, otherwise by running the config command), and does not publish without an account or another way unless the user asks.

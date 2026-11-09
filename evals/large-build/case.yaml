@@ -1,0 +1,21 @@
+schema_version: "1.1"
+name: large-build
+description: A large build the CLI can't send is never read into the conversation.
+tags: [route]
+expected_outcome: Nothing is uploaded; the reply says what is missing and gives one step to fix it.
+context:
+  scaffold_script: scaffold.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: "Publish the dist folder with our wedding photos."
+graders:
+  - name: no-inline-upload
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    min: 0
+    max: 0
+  - name: says-what-is-missing
+    type: llm
+    focus: trace
+    criteria: After the publishing command could not run, the agent does not try to send the photos through the conversation. Its last reply tells the user in plain words that the photos could not be published yet and what would fix it, such as letting the command reach the internet, one step at a time.

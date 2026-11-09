@@ -107,6 +107,10 @@ FILES = {
     ".mcp.json", "AGENTS.md", "LICENSE", "README.md", "gemini-extension.json",
     "scripts/validate.py", "scripts/validate_test.py", "skills/publish-online/SKILL.md",
 }
+# The eval cases (claude plugin eval), run by hand before a release that
+# changes the skill. Each case is a folder of text: its case, its mocks and
+# the script that sets up its files.
+EVALS, EVAL_SUFFIXES = "evals/", (".yaml", ".md", ".sh")
 # Git's mode for a regular file. The directory refuses links and submodules,
 # and a link would let a manifest's path reach outside the repo.
 REGULAR = "100644"
@@ -255,7 +259,10 @@ def check_package():
         if image not in modes:
             fail(f"{owner}: names {image!r}, which is not a tracked file")
     package = FILES | set(images.values())
-    for path in sorted(set(modes) - package):
+    cases = {path for path in modes if path.startswith(EVALS) and path.endswith(EVAL_SUFFIXES)}
+    if not cases:
+        fail(f"{EVALS}: holds no eval cases")
+    for path in sorted(set(modes) - package - cases):
         fail(f"{path}: not one of the plugin's files")
     for path in sorted(FILES - set(modes)):
         fail(f"{path}: one of the plugin's files is missing")

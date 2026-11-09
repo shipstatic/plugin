@@ -1,0 +1,25 @@
+schema_version: "1.1"
+name: upload-without-a-shell
+description: With no way to run commands, a small page goes through the upload, and the reply reads the result.
+tags: [route, report]
+expected_outcome: The page is uploaded; the reply gives the link, says 3 days, and gives the claim link as the user's alone.
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  append_system_prompt: "This session cannot run commands. You have no shell."
+  prompt: "Put this page online for me: <!doctype html><title>Lost cat</title><h1>Have you seen Miso?</h1><p>Orange, very friendly. Call the number on the poster.</p>"
+graders:
+  - name: uploads-the-page
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    input_match: 'index\.html'
+    min: 1
+  - name: gives-the-link
+    type: regex
+    pattern: 'https://quiet-fern-k2m9x4p\.shipstatic\.com'
+  - name: gives-the-claim-link
+    type: regex
+    pattern: 'https://my\.shipstatic\.com/claim/made-up-claim-code'
+  - name: reports-from-the-result
+    type: llm
+    criteria: The reply says the site stays up for 3 days, that opening the claim link and signing in keeps it, and treats the claim link as for the user alone. It does not say the site is in an account, and it uses plain words with no technical terms such as deploy, MCP or CLI.

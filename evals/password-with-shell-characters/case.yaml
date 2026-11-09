@@ -1,0 +1,21 @@
+schema_version: "1.1"
+name: password-with-shell-characters
+description: A password the user chose reaches the CLI as one literal argument, and never appears in a command shown to the user.
+tags: [decide]
+expected_outcome: The CLI receives the password single-quoted, unchanged, and the reply shows no command line with it.
+context:
+  scaffold_script: scaffold.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: "Publish the dist folder with the password blue$moon&42! please."
+graders:
+  - name: literal-argument
+    type: tool_used
+    tool: Bash
+    input_match: "--password[ =]'blue\\$moon&42!'"
+    min: 1
+  - name: no-command-in-reply
+    type: regex
+    pattern: '--password|npx '
+    match: not_contains

@@ -1,0 +1,1 @@
+{"deployment":"amber-kite-p4v8n1c.shipstatic.com","url":"https://amber-kite-p4v8n1c.shipstatic.com","files":1,"size":1024,"status":"success","config":false,"password":false,"labels":[],"via":"mcp","created":1762700000,"expires":null}

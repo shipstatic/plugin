@@ -1,0 +1,1 @@
+{"deployment":"brisk-moss-r7t2q8w.shipstatic.com","url":"https://brisk-moss-r7t2q8w.shipstatic.com","files":1,"size":1024,"status":"success","config":false,"password":true,"labels":[],"via":"mcp","created":1762700000,"expires":1762959200,"claim":"https://my.shipstatic.com/claim/another-made-up-code"}

@@ -1,0 +1,24 @@
+schema_version: "1.1"
+name: preview-only
+description: A user who only wants to see a page gets the page, not a link.
+tags: [decide]
+expected_outcome: The page is made and shown, and nothing is published.
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: "Make me a simple one-page site for my book club, Pages and Pints. I only want to see it for now, don't put it online yet."
+graders:
+  - name: no-upload
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    min: 0
+    max: 0
+  - name: no-cli
+    type: tool_used
+    tool: Bash
+    input_match: '@shipstatic/ship'
+    min: 0
+    max: 0
+  - name: shows-without-publishing
+    type: llm
+    criteria: The reply shows or describes the page the agent made, and gives no link to a published site. It does not say the page is online.

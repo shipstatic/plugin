@@ -1,0 +1,25 @@
+schema_version: "1.1"
+name: account-intent
+description: Asked to publish into an account, the agent checks which way is set up and uses it, and reports from the result.
+tags: [decide, report]
+expected_outcome: The upload, which is connected to the account, publishes the site, and the reply says it is in the account and stays until deleted.
+context:
+  scaffold_script: scaffold.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: "I'm Ana Lima, and this is my portfolio. Publish the dist folder into my ShipStatic account. I want to keep it."
+graders:
+  - name: uploads
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    min: 1
+  - name: no-claim-talk
+    type: regex
+    pattern: 'my\.shipstatic\.com/claim|3 days'
+    flags: i
+    match: not_contains
+  - name: reports-the-account
+    type: llm
+    focus: trace
+    criteria: Before publishing, the agent checks which way is connected to the user's account rather than guessing, and publishes through it. Its last reply says the site is in the user's account and stays until they delete it, without naming which account beyond what the tools returned.
