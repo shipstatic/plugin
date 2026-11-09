@@ -31,9 +31,13 @@ with the hosted URL, shared skills, a thin native manifest per host.
 .cursor-plugin/plugin.json         # the Cursor Marketplace (and Grok Bot)
 gemini-extension.json              # Gemini CLI: the same URL under its own key
 skills/publish-online/SKILL.md     # the one skill: putting things online
-assets/logo.png                    # the mark, the same bytes as www's logo.png
 scripts/validate.py                # the checks, for both workflows
 ```
+
+The logo under assets is www's logo, byte for byte. This guide names it in
+prose only: the Claude directory holds a plugin for review when a guide,
+command or script writes an image's path in backticks or a code block, so
+the manifests that need the logo are the only files that name its path.
 
 ## The skill does one job
 

@@ -68,8 +68,8 @@ KEYS = {
 FILES = {
     ".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json",
     ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json",
-    ".github/workflows/release.yml", ".github/workflows/validate.yml", ".mcp.json",
-    "AGENTS.md", "CLAUDE.md", "LICENSE", "README.md", "assets/logo.png",
+    ".claude/CLAUDE.md", ".github/workflows/release.yml", ".github/workflows/validate.yml",
+    ".mcp.json", "AGENTS.md", "LICENSE", "README.md", "assets/logo.png",
     "gemini-extension.json", "scripts/validate.py", "skills/publish-online/SKILL.md",
 }
 INTERFACE_KEYS = {
