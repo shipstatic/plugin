@@ -113,26 +113,29 @@ when Cursor starts a sign-in after connect for this host.
   to the tag);
 - exactly one server, the plain production URL, in `.mcp.json` and again
   under Gemini's `httpUrl`;
-- both marketplace entries are this repo's root, and Codex's sign-in is
-  `ON_USE`: sign-in at install would end publishing with no account;
+- both marketplace entries are this repo's root, and Codex's policy is
+  exactly `AVAILABLE` and `ON_USE`: sign-in at install would end publishing
+  with no account;
 - each manifest, and each marketplace entry, holds exactly the keys its fixed
   shape lists, each of its type: a string, a list of strings, an object (a
   key added or dropped is a design decision first, never a passing edit);
-  both marketplaces are named `shipstatic`, and Codex's policy is exactly
-  `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
   and every manifest that names the logo names the same path, inside the
   repo;
-- the Claude manifest's listing links (`supportUrl`, `privacyPolicyUrl`,
-  `termsOfServiceUrl`) equal the Codex `interface` copies, which spell them
-  `...URL`: the Claude directory reads its listing from that manifest;
+- a fact the host manifests restate is one fact: the description (the
+  Claude marketplace entry's too), the display name, the homepage (Codex's
+  `websiteURL`), the repository, the license, the keywords, the author, and
+  the Claude manifest's listing links (`supportUrl`, `privacyPolicyUrl`,
+  `termsOfServiceUrl`) against the Codex `interface` copies, which spell
+  them `...URL`. Gemini's description is its own, for Gemini's gallery;
 - the repo tracks exactly the plugin's files, each a regular file (git mode
   `100644`: no link, no submodule): the text files listed in `validate.py`,
-  and the logo at the path the manifests name. Hosts load more than
-  manifests name (a root `GEMINI.md`, a root `plugin.json`, a `commands/`
-  folder), and the file list is the one check that covers every way in. The
-  script reads the logo's path from the manifests and never opens the image:
-  git's index proves it is a tracked regular file;
+  the logo at the path the manifests name, and under `evals/` text cases
+  (YAML, Markdown, shell), at least one. Hosts load more than manifests name
+  (a root `GEMINI.md`, a root `plugin.json`, a `commands/` folder), and the
+  file list is the one check that covers every way in. The script reads the
+  logo's path from the manifests and never opens the image: git's index
+  proves it is a tracked regular file;
 - `skills/` holds exactly `publish-online`, named for its folder, and every
   mention of the CLI in it is exactly `@shipstatic/ship@N`, N the plugin's
   major;
@@ -141,12 +144,10 @@ when Cursor starts a sign-in after connect for this host.
   link to an assistant's session. A commit made in GitHub's web interface passes
   with GitHub as its committer.
 
-`scripts/validate_test.py`, which `validate.yml` runs next, drills those
-checks: in a fresh copy of the package it plants one defect at a time (a
-link, an executable file, a missing or an extra file, a directory at the
-logo's path, a bad version, a wrong type, a key added or dropped) and
-requires `validate.py` to fail naming it, after the untouched copy passes. A
-new check comes with its case.
+`scripts/validate_test.py`, which `validate.yml` runs next, drills every
+check: in a fresh copy of the package it plants each check's defect, one at
+a time, and requires `validate.py` to fail naming it, after the untouched
+copy passes. A new check comes with its case.
 
 `validate.yml` also runs `claude plugin validate --strict --profile
 directory` at an exact Claude Code version: it fails on anything the Claude
@@ -179,8 +180,7 @@ command at a time, is refused: the sandbox denies a compound command when
 any part of it is ungranted, which flips a run between the "built" and
 "could not build" branches at random. The mocks hold results only. A saved
 copy of the server's tool list is refused: it would be a second copy of the
-MCP catalogue, and the cases test
-the skill, not the tools.
+MCP catalogue, and the cases test the skill, not the tools.
 
 The checks that compare this repo with another (the skill's tool names
 against the MCP catalogue, the logo against the website's) live in a
@@ -209,12 +209,12 @@ version, and creates the GitHub Release. Tag after `validate` has passed on
 `main`; a release that ran too early is repaired with "Re-run failed jobs".
 Released and listed are separate states: Cursor reviews every update by
 hand, so a release reaches the Cursor Marketplace only once Cursor approves
-that commit. The listing itself is submitted and awaits Cursor's first
-approval; until then `/add-plugin shipstatic` finds nothing, and the
-README's other two Cursor paths (the MCP server in Cursor's settings, or the
-skill alone) are the ones that work. The README states none of this: a
-listing's state belongs here, and the README reads the same before and
-after approval.
+that commit. Cursor's Marketplace lists the plugin only once Cursor has
+approved the submission; before that, `/add-plugin shipstatic` finds
+nothing, and the README's other two Cursor paths (the MCP server in Cursor's
+settings, or the skill alone) are the ones that work. The README states no
+listing's state: it reads the same before and after approval, and offers
+the two paths for the case where the command finds nothing.
 
 A release is done when the Claude directory has scanned it: check the
 directory's scan of the release, since a scan can end with no result or hold
@@ -222,8 +222,9 @@ the version for a reviewer, and nothing else in this ritual would show it.
 
 ## Commit identity
 
-Every commit is `ShipStatic <hello@shipstatic.com>`, unsigned, and the history
-check in `validate.py` holds it.
+Every commit is `ShipStatic <hello@shipstatic.com>`, unsigned by policy.
+The history check in `validate.py` holds the identity and refuses an
+attribution line; it does not read signatures.
 
 ## Gemini CLI facts worth keeping
 

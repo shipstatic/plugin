@@ -42,15 +42,15 @@ jobs:
         # floating pin would change what this check means between two runs.
         # The directory profile fails on anything the directory would refuse
         # among the checks this validator runs, and on a check it could not
-        # make; --strict fails on any warning. The
-        # directory runs more checks, such as its policy stage, so a green
-        # run here is not the directory's verdict. Its findings are printed
-        # either way, so a hold or a note shows in the log.
+        # make; --strict fails on any warning. The directory runs more
+        # checks, such as its policy stage, so a green run here is not the
+        # directory's verdict. Its findings are printed either way, so a
+        # hold or a note shows in the log.
         run: |
           npm install --global --no-fund --no-audit @anthropic-ai/claude-code@2.1.319
           code=0
           claude plugin validate . --strict --profile directory --json > report.json || code=$?
-          jq '.directory.findings' report.json
+          jq '.directory.findings' report.json || true
           [ "$code" -eq 0 ] || { cat report.json; exit 1; }
 
   notify:
