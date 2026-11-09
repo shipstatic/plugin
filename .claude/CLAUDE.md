@@ -88,9 +88,9 @@ for a folder.
 
 **Cursor cannot sign in mid-session on this URL.** Its client starts a
 sign-in after connect only for hosts it names, so in Cursor publishing works
-with no account and account tools answer Unauthorized. The skill's last
-sentence sends the user to `my.shipstatic.com` for that case. It changes when
-Cursor starts a sign-in after connect for this host.
+with no account and account tools answer Unauthorized. The skill's section
+on accounts sends the user to `my.shipstatic.com` for that case. It changes
+when Cursor starts a sign-in after connect for this host.
 
 ## The checks
 

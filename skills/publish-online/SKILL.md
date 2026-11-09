@@ -100,7 +100,8 @@ Then:
 
 - Publish straight away. Before publishing, don't call `whoami` or any other
   ShipStatic tool, don't run `ship whoami` or `ship config`, don't add
-  `--token`, and don't start a sign-in.
+  `--token`, and don't start a sign-in, unless the user asked to publish into
+  their account (see the end).
 - Publish all the files of a version at once.
 - Don't set an expiry (`ttl`) or a domain unless the user asks for one. Both
   need an account.
@@ -108,8 +109,12 @@ Then:
   password protection: `--password <password>` on the CLI, or `password` on
   the upload. It works with no account, and it is checked before any file is
   served. Don't build a password page or script into the site. Make up a new
-  password that is hard to guess, unless the user chose one. Never ask for a
-  password the user already uses somewhere else.
+  password that is hard to guess, of letters and numbers only, unless the
+  user chose one. Never ask for a password the user already uses somewhere
+  else.
+- Pass the folder and the password to the CLI as single literal arguments
+  for the shell you use, so nothing in them is expanded or run. Never show
+  the user a command line with the password in it.
 - If the CLI fails with `authentication_failed`, the key it used was refused.
   Tell the user their saved ShipStatic key didn't work, and how to replace it
   with a new key from
@@ -122,6 +127,9 @@ Then:
   words what went wrong. Fix what you can, for example a file type that
   isn't allowed, files that are too large, or a project folder where its
   build folder was meant, and publish once more.
+- If a publish ends with no result, tell the user, and check whether the
+  site went up before you publish again. Don't switch to the other way: each
+  publish makes a new site.
 
 ## Tell the user
 
@@ -134,7 +142,9 @@ expires.
 
 - **The result has a `claim` link** (the usual case): the site has no account.
   Give the link (`url`), say it stays up for 3 days, and give the claim link:
-  opening it and signing in keeps the site for good. For example:
+  opening it and signing in keeps the site for good. The claim link is for
+  the user alone, since whoever opens it and signs in owns the site, so never
+  put it in the site or share it anywhere else. For example:
 
   > Your site is live: https://example-site-abc1234.shipstatic.com
   > It stays up for 3 days. To keep it, open
@@ -179,3 +189,7 @@ ways are set up separately:
 - **The CLI** publishes into an account once the user runs
   `npx -y @shipstatic/ship@3 config`, with an API key from
   https://my.shipstatic.com/api-key.
+
+When the user asks to publish into their account, use a way that is set up
+for it, and check which one is before publishing. If neither is, help them
+set one up first, and never guess that the two ways share an account.
