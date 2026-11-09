@@ -209,7 +209,12 @@ version, and creates the GitHub Release. Tag after `validate` has passed on
 `main`; a release that ran too early is repaired with "Re-run failed jobs".
 Released and listed are separate states: Cursor reviews every update by
 hand, so a release reaches the Cursor Marketplace only once Cursor approves
-that commit.
+that commit. The listing itself is submitted and awaits Cursor's first
+approval; until then `/add-plugin shipstatic` finds nothing, and the
+README's other two Cursor paths (the MCP server in Cursor's settings, or the
+skill alone) are the ones that work. The README states none of this: a
+listing's state belongs here, and the README reads the same before and
+after approval.
 
 A release is done when the Claude directory has scanned it: check the
 directory's scan of the release, since a scan can end with no result or hold
