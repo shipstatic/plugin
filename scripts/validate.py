@@ -8,9 +8,9 @@ release.yml on the tagged commit.
 Every manifest is a file a host reads with no import, so the facts they share
 (the name, the version, the one server's URL) are restated, and this script is
 what compares the copies. Comparisons against other repos (the skill's tool
-names against the MCP catalogue, the logo against the website's) live in the
-monorepo's scripts/check-canon.sh, so a release here never goes red because
-another repo moved.
+names against the MCP catalogue, the logo against the website's) live in a
+check outside this repo, so a release here never goes red because another
+repo moved.
 """
 
 import json
@@ -55,8 +55,8 @@ S, SS, O, OS = "string", "strings", "object", "objects"
 
 # The package's shape is fixed: each manifest holds exactly these keys, each
 # of its type. A key added (a second server, hooks, an app, a context file)
-# or dropped is a change to the plugin's shape, decided in plan-plugin.md
-# first and written here after.
+# or dropped is a change to the plugin's shape: a design decision first,
+# written here after.
 SHAPE = {
     ".claude-plugin/plugin.json": {
         "$schema": S, "name": S, "displayName": S, "version": S, "description": S, "icon": S,
@@ -197,7 +197,7 @@ def check_package():
     if codex_entry["source"] != {"source": "local", "path": "./"}:
         fail(".agents/plugins/marketplace.json: source is not the repo root")
     # Sign-in comes at first use: an account at install would end publishing
-    # with no account (plan-plugin.md §2).
+    # with no account.
     if codex_entry["policy"] != {"installation": "AVAILABLE", "authentication": "ON_USE"}:
         fail(".agents/plugins/marketplace.json: policy must be installation AVAILABLE, authentication ON_USE")
 
@@ -282,9 +282,8 @@ def check_package():
         if spec != want:
             fail(f"skills/publish-online/SKILL.md: runs @shipstatic/ship{spec}, not @shipstatic/ship{want}")
 
-    # One skill to start with, by decision (plan-plugin.md D3). A next one,
-    # such as a custom domain, is a decision recorded there first, then a
-    # line here.
+    # One skill, by decision. A next one, such as a custom domain, is a
+    # design decision first, then a line here.
     folders = sorted(os.listdir("skills"))
     if folders != ["publish-online"]:
         fail(f"skills/ holds {folders}, not the one skill ['publish-online']")

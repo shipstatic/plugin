@@ -115,11 +115,11 @@ when Cursor starts a sign-in after connect for this host.
   under Gemini's `httpUrl`;
 - both marketplace entries are this repo's root, and Codex's sign-in is
   `ON_USE`: sign-in at install would end publishing with no account;
-- each manifest, and each marketplace entry, holds exactly the keys it holds
-  today, each of its type: a string, a list of strings, an object (the
-  package's shape is fixed, so a key added or dropped is a design decision
-  first, never a passing edit); both marketplaces are named `shipstatic`, and
-  Codex's policy is exactly `AVAILABLE` and `ON_USE`;
+- each manifest, and each marketplace entry, holds exactly the keys its fixed
+  shape lists, each of its type: a string, a list of strings, an object (a
+  key added or dropped is a design decision first, never a passing edit);
+  both marketplaces are named `shipstatic`, and Codex's policy is exactly
+  `AVAILABLE` and `ON_USE`;
 - the Codex and Cursor manifests name exactly `./.mcp.json` and `./skills/`,
   and every manifest that names the logo names the same path, inside the
   repo;
@@ -150,16 +150,13 @@ new check comes with its case.
 
 `validate.yml` also runs `claude plugin validate --strict --profile
 directory` at an exact Claude Code version: it fails on anything the Claude
-directory would refuse among the checks it runs, and on any warning, with
-none allowed. It prints the directory's findings, so a hold shows in the
-log. The directory runs more checks, so a green run is not its verdict.
+directory would refuse among the checks it runs, and on any warning. It
+prints the directory's findings, so a hold shows in the log. The directory
+runs more checks, so a green run is not its verdict.
 
-`evals/` holds `claude plugin eval` cases over what the skill decides:
-preview or publish, build first, a build that fails, refuse a server app,
-the CLI for a folder, the upload with no shell, never inlining a large
-build, stop on a refused key, the password, an account request, and a
-password with shell characters. They run a model and cost money, so they run
-by hand before any release that changes the skill, never in CI, and the
+`evals/` holds `claude plugin eval` cases, one per decision the skill makes,
+each folder named for its decision. They run a model and cost money, so they
+run by hand before any release that changes the skill, never in CI, and the
 release's commit message records the scores. Every credential, password and
 path in a case is made up. A decision the trace shows (which tool ran, in
 what order, with what input) is graded by a tool or regex grader; a model
@@ -180,8 +177,9 @@ the upload (the shell cannot reach npm), and the agent then takes the
 upload, which a mock under `evals/mocks/` answers. A narrower grant, one
 command at a time, is refused: the sandbox denies a compound command when
 any part of it is ungranted, which flips a run between the "built" and
-"could not build" branches at random. The mocks hold results only. A saved copy of the server's tool list is
-refused: it would be a second copy of the MCP catalogue, and the cases test
+"could not build" branches at random. The mocks hold results only. A saved
+copy of the server's tool list is refused: it would be a second copy of the
+MCP catalogue, and the cases test
 the skill, not the tools.
 
 The checks that compare this repo with another (the skill's tool names
@@ -202,7 +200,7 @@ for the next version, or is itself a patch. Merge `development` into `main`,
 let `validate` pass on that commit, then tag it:
 
 ```bash
-git tag -a v3.1.0 -m "3.1.0" && git push origin v3.1.0
+git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z
 ```
 
 `release.yml` refuses a tag that is not on `main` or whose commit has no

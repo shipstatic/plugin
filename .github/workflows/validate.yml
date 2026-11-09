@@ -25,7 +25,7 @@ jobs:
       - name: Fetch every branch and tag, for the history check
         run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: The manifests agree, the paths exist, the history names only ShipStatic
+      - name: The manifests agree, the package is exactly its files, the history names only ShipStatic
         env:
           HISTORY_HEAD: ${{ github.event.pull_request.head.sha }}
         run: python3 scripts/validate.py
@@ -42,7 +42,7 @@ jobs:
         # floating pin would change what this check means between two runs.
         # The directory profile fails on anything the directory would refuse
         # among the checks this validator runs, and on a check it could not
-        # make; --strict fails on any warning, and none is allowed. The
+        # make; --strict fails on any warning. The
         # directory runs more checks, such as its policy stage, so a green
         # run here is not the directory's verdict. Its findings are printed
         # either way, so a hold or a note shows in the log.

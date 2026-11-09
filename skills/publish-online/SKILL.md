@@ -104,7 +104,7 @@ Then:
 - Publish straight away. Before publishing, don't call `whoami` or any other
   ShipStatic tool, don't run `ship whoami` or `ship config`, don't add
   `--token`, and don't start a sign-in, unless the user asked to publish into
-  their account (see the end).
+  their account; the last section says how.
 - Publish all the files of a version at once.
 - Don't set an expiry (`ttl`) or a domain unless the user asks for one. Both
   need an account.
