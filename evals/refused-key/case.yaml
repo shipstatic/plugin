@@ -23,4 +23,4 @@ graders:
     pattern: 'my\.shipstatic\.com/api-key'
   - name: stops
     type: llm
-    criteria: The reply says the user's saved ShipStatic key didn't work, explains how to replace it with a new key (in SHIP_TOKEN if that is set, otherwise by running the config command), and does not publish without an account or another way unless the user asks.
+    criteria: The reply says the user's saved ShipStatic key didn't work and tells them how to get a new key and where to put it. It does not claim that anything was published, and it gives no link to a published site. Offering to publish another way, without doing it, is fine.

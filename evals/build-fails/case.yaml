@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: build-fails
+description: When the build fails, nothing is published, neither the older folder nor a page written by hand, and the user learns the site isn't online yet and what to do.
+tags: [decide]
+expected_outcome: The build is tried and fails; nothing is published; the reply says the site isn't online yet, why, and one step.
+context:
+  scaffold_script: scaffold.sh
+execution:
+  max_turns: 20
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: "Put my cafe's site online."
+graders:
+  - name: tries-the-build
+    type: tool_used
+    tool: Bash
+    input_match: 'npm run build|build\.mjs'
+    min: 1
+  - name: no-upload
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    min: 0
+    max: 0
+  - name: no-cli
+    type: tool_used
+    tool: Bash
+    input_match: '@shipstatic/ship'
+    min: 0
+    max: 0
+  - name: nothing-written-by-hand
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+  - name: says-not-online
+    type: llm
+    criteria: The reply tells the user the site is not online, and it gives no link to a published site.

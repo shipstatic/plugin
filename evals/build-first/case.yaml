@@ -1,8 +1,8 @@
 schema_version: "1.1"
 name: build-first
-description: A project with a build step is built before it is published, even with an older build folder there.
+description: A project with a build step is built before it is published, even with an older build folder there, and only the fresh build goes up.
 tags: [decide]
-expected_outcome: The build runs first, and only a fresh build is published; if the build can't run, nothing is.
+expected_outcome: The build runs first, and the folder it writes is what is published, never the older one.
 context:
   scaffold_script: scaffold.sh
 execution:
@@ -21,7 +21,12 @@ graders:
     input_match: 'Winter menu'
     min: 0
     max: 0
-  - name: builds-before-publishing
-    type: llm
-    focus: trace
-    criteria: The agent runs the project's build before any attempt to publish, and never publishes the older build folder that was there before the build. If the build cannot run, it tells the user the site is not online yet and why, instead of publishing the old folder.
+  - name: publishes-the-fresh-build
+    type: tool_used
+    tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
+    input_match: 'Spring menu'
+    min: 1
+  - name: build-before-publish
+    type: tool_order
+    before: {tool: Bash, input_match: 'npm run build|build\.mjs'}
+    after: mcp__plugin_shipstatic_shipstatic__deployments_upload

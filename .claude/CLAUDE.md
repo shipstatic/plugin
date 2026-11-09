@@ -155,25 +155,32 @@ none allowed. It prints the directory's findings, so a hold shows in the
 log. The directory runs more checks, so a green run is not its verdict.
 
 `evals/` holds `claude plugin eval` cases over what the skill decides:
-preview or publish, build first, refuse a server app, the CLI for a folder,
-the upload with no shell, never inlining a large build, stop on a refused
-key, the password, an account request, and a password with shell
-characters. They run a model and cost money, so they run by hand before any
-release that changes the skill, never in CI, and the release's commit
-message records the scores. Every credential, password and path in a case is
-made up. Run them from the repo root, with the results kept out of the
-tree:
+preview or publish, build first, a build that fails, refuse a server app,
+the CLI for a folder, the upload with no shell, never inlining a large
+build, stop on a refused key, the password, an account request, and a
+password with shell characters. They run a model and cost money, so they run
+by hand before any release that changes the skill, never in CI, and the
+release's commit message records the scores. Every credential, password and
+path in a case is made up. A decision the trace shows (which tool ran, in
+what order, with what input) is graded by a tool or regex grader; a model
+judges only wording. Run them from the repo root, with the results kept out
+of the tree:
 
 ```bash
 claude plugin eval . --trust-plugin --scaffold --ablation none --no-publish -j 4 \
-  --allow-tools Write 'Bash(ls:*)' 'Bash(npm run build:*)' \
-  --output-dir "$TMPDIR/plugin-evals" --report "$TMPDIR/plugin-evals/report.html"
+  --allow-tools Write Bash \
+  --output-dir "${TMPDIR:-/tmp}/plugin-evals" --report "${TMPDIR:-/tmp}/plugin-evals/report.html"
 ```
 
-The grants leave every other command refused, the CLI included, so no case
-can publish anything: a refused CLI call still counts for the graders, and
-the agent then takes the upload, which a mock under `evals/mocks/` answers.
-The mocks hold results only. A saved copy of the server's tool list is
+The run has a shell and Node and no internet: every command runs inside
+Claude Code's sandbox, which confines writes to the run's workspace, hides
+the home directory and grants no network, so `npx` cannot fetch the CLI
+and no case can publish anything. That is the skill's own condition for
+the upload (the shell cannot reach npm), and the agent then takes the
+upload, which a mock under `evals/mocks/` answers. A narrower grant, one
+command at a time, is refused: the sandbox denies a compound command when
+any part of it is ungranted, which flips a run between the "built" and
+"could not build" branches at random. The mocks hold results only. A saved copy of the server's tool list is
 refused: it would be a second copy of the MCP catalogue, and the cases test
 the skill, not the tools.
 
