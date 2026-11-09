@@ -14,6 +14,10 @@ graders:
     type: tool_used
     tool: mcp__plugin_shipstatic_shipstatic__deployments_upload
     min: 1
+  - name: checks-the-account-first
+    type: tool_order
+    before: mcp__plugin_shipstatic_shipstatic__whoami
+    after: mcp__plugin_shipstatic_shipstatic__deployments_upload
   - name: no-claim-talk
     type: regex
     pattern: 'my\.shipstatic\.com/claim|3 days'
@@ -22,4 +26,4 @@ graders:
   - name: reports-the-account
     type: llm
     focus: trace
-    criteria: Before publishing, the agent checks which way is connected to the user's account rather than guessing, and publishes through it. Its last reply says the site is in the user's account and stays until they delete it, without naming which account beyond what the tools returned.
+    criteria: The last reply says the site is in the user's account and stays until they delete it, without naming which account beyond what the tools returned, and gives no claim link.
