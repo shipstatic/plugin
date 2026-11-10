@@ -89,6 +89,7 @@ Signing in on one way doesn't set up the other. You can see and manage every sit
 | **[MCP](https://mcp.shipstatic.com)** | Drop `https://mcp.shipstatic.com` into any MCP client |
 | **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
 | **[VS Code](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the Marketplace |
+| **[OpenCode](https://github.com/shipstatic/opencode)** | `opencode plugin add opencode-shipstatic` |
 | **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
 | **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v3` |
 
