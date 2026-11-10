@@ -21,9 +21,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Fetch every branch and tag, for the history check
-        run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
-
       - name: The tagged commit is on main
         # A release is what main holds: a tag on an unmerged commit would
         # publish a Release nobody merged.
@@ -39,8 +36,12 @@ jobs:
           passed=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/validate.yml/runs?head_sha=$GITHUB_SHA&status=success" --jq '.total_count')
           [ "$passed" -gt 0 ] || { echo "::error::validate has not passed on $GITHUB_SHA: merge to main, wait for it, then tag"; exit 1; }
 
-      - name: The tagged commit validates, and the tag is every manifest's version
-        run: python3 scripts/validate.py --tag "$GITHUB_REF_NAME"
+      - name: The tag is every manifest's version
+        run: |
+          for f in .claude-plugin/plugin.json .codex-plugin/plugin.json .cursor-plugin/plugin.json gemini-extension.json; do
+            v=$(jq -r .version "$f")
+            [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "::error::$f is $v, but the tag is $GITHUB_REF_NAME"; exit 1; }
+          done
 
   release:
     needs: [check]

@@ -1,1 +1,0 @@
-{"deployment":"quiet-fern-k2m9x4p.shipstatic.com","url":"https://quiet-fern-k2m9x4p.shipstatic.com","files":2,"size":2048,"status":"success","config":false,"password":false,"labels":[],"via":"mcp","created":1762700000,"expires":1762959200,"claim":"https://my.shipstatic.com/claim/made-up-claim-code"}

@@ -19,19 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
           persist-credentials: false
-
-      - name: Fetch every branch and tag, for the history check
-        run: git fetch --quiet --tags origin '+refs/heads/*:refs/remotes/origin/*'
-
-      - name: The manifests agree, the package is exactly its files, the history names only ShipStatic
-        env:
-          HISTORY_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: python3 scripts/validate.py
-
-      - name: Each of those checks refuses the defect it names
-        run: python3 scripts/validate_test.py
 
       - uses: actions/setup-node@v7
         with:
@@ -45,7 +33,11 @@ jobs:
         # make; --strict fails on any warning. The directory runs more
         # checks, such as its policy stage, so a green run here is not the
         # directory's verdict. Its findings are printed either way, so a
-        # hold or a note shows in the log.
+        # hold or a note shows in the log. The package's own checks (one
+        # name, one version, one URL, the shape, the file list, the history)
+        # run outside this repo, before a release: the plugin is text,
+        # since the directory accepts a file that runs only from a
+        # Verified organization.
         run: |
           npm install --global --no-fund --no-audit @anthropic-ai/claude-code@2.1.319
           code=0

@@ -31,9 +31,6 @@ with the hosted URL, shared skills, a thin native manifest per host.
 .cursor-plugin/plugin.json         # the Cursor Marketplace (and Grok Bot)
 gemini-extension.json              # Gemini CLI: the same URL under its own key
 skills/publish-online/SKILL.md     # the one skill: putting things online
-scripts/validate.py                # the checks, for both workflows
-scripts/validate_test.py           # each check, drilled against its defect
-evals/                             # what the skill decides, run by hand
 .claude/CLAUDE.md                  # this guide
 ```
 
@@ -41,8 +38,14 @@ The plugin folder is the repo root, so every tracked file ships to every
 installer and is scanned as the plugin. That is the price of one repo serving
 five hosts: Gemini CLI installs the root and finds `skills/` only there. So
 this guide lives in `.claude/`, where a contributor's Claude Code still loads
-it and no host reads it as the plugin's, and the evals and the validator's
-test are text a host never runs.
+it and no host reads it as the plugin's.
+
+**Nothing in this repo runs.** The Claude directory accepts a script, a
+program, a file starting with `#!` or a package-manager configuration file
+in a plugin only from a Verified organization, and refuses the version
+otherwise. So the repo holds the manifests, the skill, the logo and this
+guide, and the checks and eval cases that test it are kept and run outside
+it, before a release.
 
 The logo under assets is www's logo, byte for byte. This guide names it in
 prose only: the Claude directory holds a plugin for review when a guide,
@@ -62,7 +65,7 @@ site has no account yet), never from whether the host is connected.
 plugin's own major is that number: the plugin is 3.x while its skill runs
 `@shipstatic/ship@3`, and it moves to 4 only in the release whose skill runs
 `@4`. Minor and patch are the plugin's own, so a ship release forces no plugin
-release. `scripts/validate.py` holds the pin and the major equal.
+release. The checks hold the pin and the major equal.
 
 The skill's text is owned here, and it is ShipStatic's one skill: the CLI
 package ships none of its own. `npx skills add shipstatic/plugin` installs it
@@ -104,8 +107,9 @@ when Cursor starts a sign-in after connect for this host.
 
 ## The checks
 
-`scripts/validate.py`, run by `validate.yml` on both branches and by
-`release.yml` on the tagged commit:
+The package's own checks run outside this repo, before every release, with
+a test that plants each check's defect in a fresh copy of the package and
+requires the check to name it. They hold:
 
 - every manifest is readable JSON;
 - one name, `shipstatic`, everywhere, and one version across the four
@@ -129,11 +133,10 @@ when Cursor starts a sign-in after connect for this host.
   `termsOfServiceUrl`) against the Codex `interface` copies, which spell
   them `...URL`. Gemini's description is its own, for Gemini's gallery;
 - the repo tracks exactly the plugin's files, each a regular file (git mode
-  `100644`: no link, no submodule): the text files listed in `validate.py`,
-  the logo at the path the manifests name, and under `evals/` text cases
-  (YAML, Markdown, shell), at least one. Hosts load more than manifests name
+  `100644`: no link, no submodule): the text files the checks list, and the
+  logo at the path the manifests name. Hosts load more than manifests name
   (a root `GEMINI.md`, a root `plugin.json`, a `commands/` folder), and the
-  file list is the one check that covers every way in. The script reads the
+  file list is the one check that covers every way in. The check reads the
   logo's path from the manifests and never opens the image: git's index
   proves it is a tracked regular file;
 - `skills/` holds exactly `publish-online`, named for its folder, and every
@@ -144,48 +147,23 @@ when Cursor starts a sign-in after connect for this host.
   link to an assistant's session. A commit made in GitHub's web interface passes
   with GitHub as its committer.
 
-`scripts/validate_test.py`, which `validate.yml` runs next, drills every
-check: in a fresh copy of the package it plants each check's defect, one at
-a time, and requires `validate.py` to fail naming it, after the untouched
-copy passes. A new check comes with its case.
+A new check comes with its case. The checks that compare this repo with
+another (the skill's tool names against the MCP catalogue, the logo against
+the website's) are outside it too, so a release here never goes red
+because another repo moved.
 
-`validate.yml` also runs `claude plugin validate --strict --profile
-directory` at an exact Claude Code version: it fails on anything the Claude
-directory would refuse among the checks it runs, and on any warning. It
-prints the directory's findings, so a hold shows in the log. The directory
-runs more checks, so a green run is not its verdict.
+`validate.yml` runs `claude plugin validate --strict --profile directory`
+at an exact Claude Code version on both branches: it fails on anything the
+Claude directory would refuse among the checks it runs, and on any warning.
+It prints the directory's findings, so a hold shows in the log. The
+directory runs more checks, so a green run is not its verdict.
 
-`evals/` holds `claude plugin eval` cases, one per decision the skill makes,
-each folder named for its decision. They run a model and cost money, so they
-run by hand before any release that changes the skill, never in CI, and the
-release's commit message records the scores. Every credential, password and
-path in a case is made up. A decision the trace shows (which tool ran, in
-what order, with what input) is graded by a tool or regex grader; a model
-judges only wording. Run them from the repo root, with the results kept out
-of the tree:
-
-```bash
-claude plugin eval . --trust-plugin --scaffold --ablation none --no-publish -j 4 \
-  --allow-tools Write Bash \
-  --output-dir "${TMPDIR:-/tmp}/plugin-evals" --report "${TMPDIR:-/tmp}/plugin-evals/report.html"
-```
-
-The run has a shell and Node and no internet: every command runs inside
-Claude Code's sandbox, which confines writes to the run's workspace, hides
-the home directory and grants no network, so `npx` cannot fetch the CLI
-and no case can publish anything. That is the skill's own condition for
-the upload (the shell cannot reach npm), and the agent then takes the
-upload, which a mock under `evals/mocks/` answers. A narrower grant, one
-command at a time, is refused: the sandbox denies a compound command when
-any part of it is ungranted, which flips a run between the "built" and
-"could not build" branches at random. The mocks hold results only. A saved
-copy of the server's tool list is refused: it would be a second copy of the
-MCP catalogue, and the cases test the skill, not the tools.
-
-The checks that compare this repo with another (the skill's tool names
-against the MCP catalogue, the logo against the website's) live in a
-check outside this repo, so a release here never goes red because another repo
-moved.
+The eval cases (`claude plugin eval`), one per decision the skill makes,
+sit with the checks. They run a model and cost money, so they run by hand
+before any release that changes the skill, never in CI, and the release's
+commit message records the scores. Every credential, password and path in a
+case is made up, and a case's mock holds a tool result only, never a copy
+of the server's tool list: the cases test the skill, not the tools.
 
 **The `validate` job's name is the check `main`'s protection requires.**
 Renaming it leaves `main` unprotected.
@@ -203,10 +181,12 @@ let `validate` pass on that commit, then tag it:
 git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z
 ```
 
-`release.yml` refuses a tag that is not on `main` or whose commit has no
-successful run of `validate.yml`, checks the tag against every manifest's
-version, and creates the GitHub Release. Tag after `validate` has passed on
-`main`; a release that ran too early is repaired with "Re-run failed jobs".
+Before the merge, run the checks outside this repo against the commit, with
+the tag they are about to get. `release.yml` refuses a tag that is not on
+`main` or whose commit has no successful run of `validate.yml`, checks the
+tag against every manifest's version, and creates the GitHub Release. Tag
+after `validate` has passed on `main`; a release that ran too early is
+repaired with "Re-run failed jobs".
 Released and listed are separate states: Cursor reviews every update by
 hand, so a release reaches the Cursor Marketplace only once Cursor approves
 that commit. Cursor's Marketplace lists the plugin only once Cursor has
@@ -223,7 +203,7 @@ the version for a reviewer, and nothing else in this ritual would show it.
 ## Commit identity
 
 Every commit is `ShipStatic <hello@shipstatic.com>`, unsigned by policy.
-The history check in `validate.py` holds the identity and refuses an
+The history check among the checks holds the identity and refuses an
 attribution line; it does not read signatures.
 
 ## Gemini CLI facts worth keeping
