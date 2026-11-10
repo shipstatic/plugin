@@ -45,7 +45,10 @@ program, a file starting with `#!` or a package-manager configuration file
 in a plugin only from a Verified organization, and refuses the version
 otherwise. So the repo holds the manifests, the skill, the logo and this
 guide, and the checks and eval cases that test it are kept and run outside
-it, before a release.
+it, before a release. This guide is scanned as the plugin's text too, so a
+command block in it names an installed tool and never a launcher that
+fetches and runs a package unasked (`npx -y`): the directory reads that as
+a step the plugin takes at install and holds the version for a reviewer.
 
 The logo under assets is www's logo, byte for byte. This guide names it in
 prose only: the Claude directory holds a plugin for review when a guide,
@@ -79,11 +82,11 @@ copies.
 ClawHub (OpenClaw, and Hermes's Skills Hub, which reads it) serves the skill as
 `shipstatic`, a copy published by hand, because ClawHub has no trusted
 publishing for skills. After a release that changes the skill, publish the
-released bytes there, signed in to ShipStatic's ClawHub account, with the next
-version:
+released bytes there with the ClawHub CLI (`clawhub`, 0.23.3), signed in to
+ShipStatic's ClawHub account, with the next version:
 
 ```bash
-npx -y clawhub@0.23.3 skill publish <folder holding the released SKILL.md> --slug shipstatic \
+clawhub skill publish <folder holding the released SKILL.md> --slug shipstatic \
   --name ShipStatic --version <x.y.z> --source-repo shipstatic/plugin \
   --source-commit <released sha> --source-ref main --source-path skills/publish-online
 ```
