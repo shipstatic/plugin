@@ -36,7 +36,7 @@ codex plugin add shipstatic@shipstatic
 gemini extensions install https://github.com/shipstatic/plugin
 ```
 
-Gemini CLI serves paid and API-key plans. Google moved free users to Antigravity CLI.
+Gemini CLI no longer takes a Google sign-in on personal accounts, including AI Pro and Ultra. Google moved those to Antigravity CLI, which has [its own ShipStatic plugin](https://github.com/shipstatic/antigravity).
 
 ### Just the skill, in any skills-aware tool
 
@@ -90,6 +90,7 @@ Signing in on one way doesn't set up the other. You can see and manage every sit
 | **[CLI and SDK](https://github.com/shipstatic/ship)** | `npx @shipstatic/ship ./dist` |
 | **[VS Code](https://marketplace.visualstudio.com/items?itemName=shipstatic.shipstatic)** | Search "ShipStatic" in the Marketplace |
 | **[OpenCode](https://github.com/shipstatic/opencode)** | `opencode plugin add opencode-shipstatic` |
+| **[Antigravity](https://github.com/shipstatic/antigravity)** | `agy plugin install https://github.com/shipstatic/antigravity` |
 | **[n8n](https://www.npmjs.com/package/n8n-nodes-shipstatic)** | Search "ShipStatic" in n8n's node panel |
 | **[GitHub Action](https://github.com/shipstatic/action)** | `shipstatic/action@v3` |
 
